@@ -1,0 +1,75 @@
+#set($symbol_pound = '#')
+
+$symbol_pound$symbol_pound Including in AEM Projects
+
+The including project's Core and UI module POM files should include the Avionos AEM Foundation API, Core, and Injectors modules as provided dependencies.
+
+    <dependencies>
+        [...]
+        <dependency>
+            <groupId>com.avionos.aem.foundation</groupId>
+            <artifactId>avionos-aem-foundation-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.avionos.aem.foundation</groupId>
+            <artifactId>avionos-aem-foundation-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.avionos.aem.foundation</groupId>
+            <artifactId>avionos-aem-foundation-injectors</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+Optionally, the Avionos AEM Foundation parent POM can be defined as the project's parent to inherit dependency and plugin management.
+
+    <parent>
+        <groupId>com.avionos.aem.foundation</groupId>
+        <artifactId>avionos-aem-foundation</artifactId>
+        <version>${project.version}</version>
+    </parent>
+
+Finally, add the Foundation and Groovy bundle dependencies as embedded artifacts in the package plugin configuration in the project's UI module.
+
+    <build>
+        <plugins>
+            [...]
+            <plugin>
+                <groupId>com.day.jcr.vault</groupId>
+                <artifactId>content-package-maven-plugin</artifactId>
+                <version>0.5.1</version>
+                <extensions>true</extensions>
+                <configuration>
+                    [...]
+                    <embeddeds>
+                        <embedded>
+                            <groupId>com.avionos.aem.foundation</groupId>
+                            <artifactId>avionos-aem-foundation-core</artifactId>
+                            <target>/apps/project-name/install</target>
+                            <excludeTransitive>true</excludeTransitive>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.avionos.aem.foundation</groupId>
+                            <artifactId>avionos-aem-foundation-api</artifactId>
+                            <target>/apps/project-name/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.avionos.aem.foundation</groupId>
+                            <artifactId>avionos-aem-foundation-injectors</artifactId>
+                            <target>/apps/project-name/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <target>/apps/project-name/install</target>
+                        </embedded>
+                    </embeddeds>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>

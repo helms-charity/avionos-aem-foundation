@@ -45,8 +45,8 @@ public interface Inheritable {
      * ".html" appended
      * @param mapped if true, the property value will be routed through the Resource Resolver to determine the mapped
      * path for the value.  For example, if a mapping from "/content/" to "/" exists in the Apache Sling Resource
-     * Resolver Factory OSGi configuration, getting the mapped href for the path "/content/citytechinc" will return
-     * "/citytechinc.html".
+     * Resolver Factory OSGi configuration, getting the mapped href for the path "/content/avionos" will return
+     * "/avionos.html".
      * @return <code>Optional</code> href
      */
     Optional<String> getAsHrefInherited(String propertyName, boolean strict, boolean mapped);
@@ -84,8 +84,8 @@ public interface Inheritable {
      * extension
      * @param mapped if true, the property value will be routed through the Resource Resolver to determine the mapped
      * path for the value.  For example, if a mapping from "/content/" to "/" exists in the Apache Sling Resource
-     * Resolver Factory OSGi configuration, the <code>Link</code> path will be "/citytechinc" rather than
-     * "/content/citytechinc".
+     * Resolver Factory OSGi configuration, the <code>Link</code> path will be "/avionos" rather than
+     * "/content/avionos".
      * @return <code>Optional</code> link object, or null if the property does not contain a valid content path
      */
     Optional<Link> getAsLinkInherited(String propertyName, boolean strict, boolean mapped);

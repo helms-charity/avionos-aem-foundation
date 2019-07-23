@@ -23,7 +23,7 @@ class EnumInjectorSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component(beer: "LAGER")
                 }
@@ -34,7 +34,7 @@ class EnumInjectorSpec extends SlingModelSpec {
     def "enum is injected when component property value is valid"() {
         setup:
         def request = requestBuilder.build {
-            path = "/content/citytechinc/jcr:content/component"
+            path = "/content/avionos/jcr:content/component"
         }
 
         def model = request.adaptTo(EnumInjectorModel)
@@ -46,7 +46,7 @@ class EnumInjectorSpec extends SlingModelSpec {
     def "enum is null when component property does not exist"() {
         setup:
         def request = requestBuilder.build {
-            path = "/content/citytechinc/jcr:content"
+            path = "/content/avionos/jcr:content"
         }
 
         def model = request.adaptTo(EnumInjectorModel)

@@ -22,7 +22,7 @@ class ValueMapFromRequestInjectorSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component(name: "Avionos AEM Foundation")
                 }
@@ -35,7 +35,7 @@ class ValueMapFromRequestInjectorSpec extends SlingModelSpec {
     def "inject values for component"() {
         setup:
         def request = requestBuilder.build {
-            path = "/content/citytechinc/jcr:content/component"
+            path = "/content/avionos/jcr:content/component"
         }
 
         def model = request.adaptTo(ValueMapInjectorModel)

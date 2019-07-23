@@ -8,13 +8,13 @@ class ResourceTypePredicateSpec extends FoundationSpec {
 
     def setupSpec() {
         nodeBuilder.content {
-            citytechinc("sling:resourceType": "page")
+            avionos("sling:resourceType": "page")
         }
     }
 
     def "resource with matching resource type is included"() {
         setup:
-        def resource = resourceResolver.getResource("/content/citytechinc")
+        def resource = resourceResolver.getResource("/content/avionos")
         def predicate = new ResourceTypePredicate(resourceType)
 
         expect:
@@ -25,6 +25,4 @@ class ResourceTypePredicateSpec extends FoundationSpec {
         "page"       | true
         "node"       | false
     }
-
-
 }

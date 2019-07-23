@@ -31,7 +31,7 @@ class TagInjectorSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component(
                         singleTag: "beers:lager",
@@ -66,7 +66,7 @@ class TagInjectorSpec extends SlingModelSpec {
 
     def "all tags populated from root"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/jcr:content/component")
+        def resource = resourceResolver.resolve("/content/avionos/jcr:content/component")
         def component = resource.adaptTo(Component)
 
         expect:
@@ -85,7 +85,7 @@ class TagInjectorSpec extends SlingModelSpec {
 
     def "all inherited tags populated"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/page1/jcr:content/component")
+        def resource = resourceResolver.resolve("/content/avionos/page1/jcr:content/component")
         def component = resource.adaptTo(Component)
 
         expect:

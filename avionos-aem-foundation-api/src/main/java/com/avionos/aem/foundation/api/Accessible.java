@@ -71,8 +71,8 @@ public interface Accessible {
      * ".html" appended
      * @param mapped if true, the property value will be routed through the Resource Resolver to determine the mapped
      * path for the value.  For example, if a mapping from "/content/" to "/" exists in the Apache Sling Resource
-     * Resolver Factory OSGi configuration, getting the mapped href for the path "/content/citytechinc" will return
-     * "/citytechinc.html".
+     * Resolver Factory OSGi configuration, getting the mapped href for the path "/content/avionos" will return
+     * "/avionos.html".
      * @return href value wrapped in an <code>Optional</code>
      */
     Optional<String> getAsHref(String propertyName, boolean strict, boolean mapped);
@@ -108,8 +108,8 @@ public interface Accessible {
      * extension
      * @param mapped if true, the property value will be routed through the Resource Resolver to determine the mapped
      * path for the value.  For example, if a mapping from "/content/" to "/" exists in the Apache Sling Resource
-     * Resolver Factory OSGi configuration, the <code>Link</code> path will be "/citytechinc" rather than
-     * "/content/citytechinc".
+     * Resolver Factory OSGi configuration, the <code>Link</code> path will be "/avionos" rather than
+     * "/content/avionos".
      * @return <code>Optional</code> link object, absent if property does not contain a valid content path
      */
     Optional<Link> getAsLink(String propertyName, boolean strict, boolean mapped);

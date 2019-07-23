@@ -39,7 +39,7 @@ class InheritInjectorSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component("title": "Testing Component", "items": ["item1", "item2"], "text": "Not Inherited",
                         "option": "TWO") {
@@ -58,7 +58,7 @@ class InheritInjectorSpec extends SlingModelSpec {
 
     def "basic inheritance"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/page1/jcr:content/component")
+        def resource = resourceResolver.resolve("/content/avionos/page1/jcr:content/component")
         def component = resource.adaptTo(InheritModel)
 
         expect:
@@ -73,7 +73,7 @@ class InheritInjectorSpec extends SlingModelSpec {
 
     def "enum inheritance"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/page1/jcr:content/component")
+        def resource = resourceResolver.resolve("/content/avionos/page1/jcr:content/component")
         def component = resource.adaptTo(InheritModel)
 
         expect:
@@ -82,7 +82,7 @@ class InheritInjectorSpec extends SlingModelSpec {
 
     def "model list inheritance"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/page1/jcr:content/component")
+        def resource = resourceResolver.resolve("/content/avionos/page1/jcr:content/component")
         def component = resource.adaptTo(InheritModel)
 
         expect:
@@ -94,7 +94,7 @@ class InheritInjectorSpec extends SlingModelSpec {
 
     def "model child resource inheritance"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/page1/jcr:content/component")
+        def resource = resourceResolver.resolve("/content/avionos/page1/jcr:content/component")
         def component = resource.adaptTo(InheritModel)
 
         expect:

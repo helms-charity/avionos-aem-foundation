@@ -25,7 +25,7 @@ class ModelListInjectorSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component {
                         rush {
@@ -42,7 +42,7 @@ class ModelListInjectorSpec extends SlingModelSpec {
     def "inject list of models"() {
         setup:
         def request = requestBuilder.build {
-            path = "/content/citytechinc/jcr:content/component"
+            path = "/content/avionos/jcr:content/component"
         }
 
         def model = request.adaptTo(ListModel)

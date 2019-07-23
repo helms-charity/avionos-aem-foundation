@@ -21,7 +21,7 @@ class ComponentInjectorSpec extends FoundationSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component("jcr:title": "Testing Component")
                 }
@@ -36,7 +36,7 @@ class ComponentInjectorSpec extends FoundationSpec {
 
     def "get value from resource for valid type returns non-null value"() {
         setup:
-        def resource = getResource("/content/citytechinc/jcr:content/component")
+        def resource = getResource("/content/avionos/jcr:content/component")
         def value = injector.getValue(resource, null, type, null, null)
 
         expect:
@@ -49,7 +49,7 @@ class ComponentInjectorSpec extends FoundationSpec {
 
     def "get value from resource for invalid type returns null value"() {
         setup:
-        def resource = getResource("/content/citytechinc/jcr:content/component")
+        def resource = getResource("/content/avionos/jcr:content/component")
         def value = injector.getValue(resource, null, String, null, null)
 
         expect:

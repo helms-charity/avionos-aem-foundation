@@ -22,7 +22,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc("CITYTECH, Inc.") {
+            avionos("Avionos") {
                 "jcr:content"(otherPagePath: "/content/ales/esb", pageTitle: "Page Title",
                     navTitle: "Navigation Title") {
                     component {
@@ -60,7 +60,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         }
 
         nodeBuilder.content {
-            citytechinc {
+            avionos {
                 empty(NameConstants.NT_PAGE)
             }
             dam("sling:Folder") {
@@ -79,7 +79,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get absolute parent"() {
         setup:
-        def page = getPage("/content/citytechinc/child1")
+        def page = getPage("/content/avionos/child1")
 
         expect:
         page.getAbsoluteParent(level).path == absoluteParentPath
@@ -87,13 +87,13 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         where:
         level | absoluteParentPath
         0     | "/content"
-        1     | "/content/citytechinc"
-        2     | "/content/citytechinc/child1"
+        1     | "/content/avionos"
+        2     | "/content/avionos/child1"
     }
 
     def "get parent"() {
         setup:
-        def page = getPage("/content/citytechinc/child1")
+        def page = getPage("/content/avionos/child1")
 
         expect:
         page.getParent(level).path == parentPath
@@ -101,21 +101,21 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         where:
         level | parentPath
         2     | "/content"
-        1     | "/content/citytechinc"
-        0     | "/content/citytechinc/child1"
+        1     | "/content/avionos"
+        0     | "/content/avionos/child1"
     }
 
     def "adapt to"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
-        page.adaptTo(ComponentResource).path == "/content/citytechinc/jcr:content"
+        page.adaptTo(ComponentResource).path == "/content/avionos/jcr:content"
     }
 
     def "adapt to returns null"() {
         setup:
-        def page = getPage("/content/citytechinc/empty")
+        def page = getPage("/content/avionos/empty")
 
         expect:
         !page.adaptTo(ComponentResource)
@@ -129,10 +129,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.asMap().containsKey(propertyName) == result
 
         where:
-        path                         | propertyName          | result
-        "/content/citytechinc"       | "otherPagePath"       | true
-        "/content/citytechinc"       | "nonExistentProperty" | false
-        "/content/citytechinc/empty" | "otherPagePath"       | false
+        path                     | propertyName          | result
+        "/content/avionos"       | "otherPagePath"       | true
+        "/content/avionos"       | "nonExistentProperty" | false
+        "/content/avionos/empty" | "otherPagePath"       | false
     }
 
     def "get"() {
@@ -143,10 +143,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.get(propertyName, defaultValue) == result
 
         where:
-        path                         | propertyName          | defaultValue | result
-        "/content/citytechinc"       | "otherPagePath"       | ""           | "/content/ales/esb"
-        "/content/citytechinc"       | "nonExistentProperty" | ""           | ""
-        "/content/citytechinc/empty" | "otherPagePath"       | "/content"   | "/content"
+        path                     | propertyName          | defaultValue | result
+        "/content/avionos"       | "otherPagePath"       | ""           | "/content/ales/esb"
+        "/content/avionos"       | "nonExistentProperty" | ""           | ""
+        "/content/avionos/empty" | "otherPagePath"       | "/content"   | "/content"
     }
 
     def "get optional"() {
@@ -157,10 +157,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.get(propertyName, String).present == result
 
         where:
-        path                         | propertyName          | result
-        "/content/citytechinc"       | "otherPagePath"       | true
-        "/content/citytechinc"       | "nonExistentProperty" | false
-        "/content/citytechinc/empty" | "otherPagePath"       | false
+        path                     | propertyName          | result
+        "/content/avionos"       | "otherPagePath"       | true
+        "/content/avionos"       | "nonExistentProperty" | false
+        "/content/avionos/empty" | "otherPagePath"       | false
     }
 
     def "get as href"() {
@@ -171,10 +171,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.getAsHref(propertyName).present == result
 
         where:
-        path                         | propertyName          | result
-        "/content/citytechinc"       | "otherPagePath"       | true
-        "/content/citytechinc"       | "nonExistentProperty" | false
-        "/content/citytechinc/empty" | "otherPagePath"       | false
+        path                     | propertyName          | result
+        "/content/avionos"       | "otherPagePath"       | true
+        "/content/avionos"       | "nonExistentProperty" | false
+        "/content/avionos/empty" | "otherPagePath"       | false
     }
 
     def "get as href strict"() {
@@ -185,10 +185,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.getAsHref(propertyName, true).present == result
 
         where:
-        path                         | propertyName          | result
-        "/content/citytechinc"       | "otherPagePath"       | true
-        "/content/citytechinc"       | "nonExistentProperty" | false
-        "/content/citytechinc/empty" | "otherPagePath"       | false
+        path                     | propertyName          | result
+        "/content/avionos"       | "otherPagePath"       | true
+        "/content/avionos"       | "nonExistentProperty" | false
+        "/content/avionos/empty" | "otherPagePath"       | false
     }
 
     def "get as mapped href"() {
@@ -199,10 +199,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.getAsHref(propertyName, false, true).present == result
 
         where:
-        path                         | propertyName          | result
-        "/content/citytechinc"       | "otherPagePath"       | true
-        "/content/citytechinc"       | "nonExistentProperty" | false
-        "/content/citytechinc/empty" | "otherPagePath"       | false
+        path                     | propertyName          | result
+        "/content/avionos"       | "otherPagePath"       | true
+        "/content/avionos"       | "nonExistentProperty" | false
+        "/content/avionos/empty" | "otherPagePath"       | false
     }
 
     def "get as mapped href strict"() {
@@ -213,10 +213,10 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.getAsHref(propertyName, true, true).present == result
 
         where:
-        path                         | propertyName          | result
-        "/content/citytechinc"       | "otherPagePath"       | true
-        "/content/citytechinc"       | "nonExistentProperty" | false
-        "/content/citytechinc/empty" | "otherPagePath"       | false
+        path                     | propertyName          | result
+        "/content/avionos"       | "otherPagePath"       | true
+        "/content/avionos"       | "nonExistentProperty" | false
+        "/content/avionos/empty" | "otherPagePath"       | false
     }
 
     def "find ancestor optional"() {
@@ -225,7 +225,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         def predicate = new Predicate<FoundationPage>() {
             @Override
             boolean test(FoundationPage input) {
-                input.title == "CITYTECH, Inc."
+                input.title == "Avionos"
             }
         }
 
@@ -233,13 +233,13 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.findAncestor(predicate, excludeCurrentResource).present == isPresent
 
         where:
-        path                          | excludeCurrentResource | isPresent
-        "/content/citytechinc"        | false                  | true
-        "/content/citytechinc/child1" | false                  | true
-        "/content/other"              | false                  | false
-        "/content/citytechinc"        | true                   | false
-        "/content/citytechinc/child1" | true                   | true
-        "/content/other"              | true                   | false
+        path                      | excludeCurrentResource | isPresent
+        "/content/avionos"        | false                  | true
+        "/content/avionos/child1" | false                  | true
+        "/content/other"          | false                  | false
+        "/content/avionos"        | true                   | false
+        "/content/avionos/child1" | true                   | true
+        "/content/other"          | true                   | false
     }
 
     def "find ancestor with property"() {
@@ -305,22 +305,22 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.templatePath == templatePath
 
         where:
-        path                          | templatePath
-        "/content/citytechinc"        | ""
-        "/content/citytechinc/child1" | "template"
+        path                      | templatePath
+        "/content/avionos"        | ""
+        "/content/avionos/child1" | "template"
     }
 
     def "get component resource"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
-        page.componentResource.get().path == "/content/citytechinc/jcr:content"
+        page.componentResource.get().path == "/content/avionos/jcr:content"
     }
 
     def "get component resource returns absent optional for page with no jcr:content node"() {
         setup:
-        def page = getPage("/content/citytechinc/empty")
+        def page = getPage("/content/avionos/empty")
 
         expect:
         !page.componentResource.present
@@ -328,23 +328,23 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get component resource at relative path"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
-        page.getComponentResource("component/one").get().path == "/content/citytechinc/jcr:content/component/one"
+        page.getComponentResource("component/one").get().path == "/content/avionos/jcr:content/component/one"
     }
 
     def "adapt to component resource"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
-        page.adaptTo(ComponentResource).path == "/content/citytechinc/jcr:content"
+        page.adaptTo(ComponentResource).path == "/content/avionos/jcr:content"
     }
 
     def "adapt to resource for page with no jcr:content node returns null"() {
         setup:
-        def page = getPage("/content/citytechinc/empty")
+        def page = getPage("/content/avionos/empty")
 
         expect:
         !page.adaptTo(ComponentResource)
@@ -352,7 +352,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get child"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.getChild("child2").get().title == "Also Child 2"
@@ -360,7 +360,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get children"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.children.size() == 3
@@ -368,7 +368,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "list children"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.listChildPages().size() == 3
@@ -376,7 +376,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get displayable children"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.getChildren(true).size() == 1
@@ -384,7 +384,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get children filtered for predicate"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
         def predicate = new TemplatePredicate("template")
 
         expect:
@@ -393,7 +393,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "list children filtered for predicate"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
         def predicate = new TemplatePredicate("template")
 
         expect:
@@ -402,7 +402,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "list children recursively, filtered for predicate"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.listChildPages(predicate, true).size() == size
@@ -415,7 +415,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "find descendants"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.findDescendants(TRUE).size() == 4
@@ -423,7 +423,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get properties"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.properties.keySet().containsAll(["jcr:title", "otherPagePath"])
@@ -431,7 +431,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get properties for page with no jcr:content node"() {
         setup:
-        def page = getPage("/content/citytechinc/empty")
+        def page = getPage("/content/avionos/empty")
 
         expect:
         page.properties.isEmpty()
@@ -439,7 +439,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get properties at relative path"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.getProperties("component/one").containsKey("sling:resourceType")
@@ -447,21 +447,21 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get title"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
 
         expect:
         page.getTitle(titleType).get() == title
 
         where:
         titleType                  | title
-        TitleType.TITLE            | "CITYTECH, Inc."
+        TitleType.TITLE            | "Avionos"
         TitleType.NAVIGATION_TITLE | "Navigation Title"
         TitleType.PAGE_TITLE       | "Page Title"
     }
 
     def "get title returns absent where appropriate"() {
         setup:
-        def page = getPage("/content/citytechinc/child1")
+        def page = getPage("/content/avionos/child1")
 
         expect:
         !page.getTitle(titleType).present
@@ -475,21 +475,21 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
     def "get image link"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
         def imageLink = page.getImageLink("/image")
 
         expect:
-        imageLink.href == "/content/citytechinc.html"
+        imageLink.href == "/content/avionos.html"
         imageLink.imageSource == "/image"
     }
 
     def "get navigation link"() {
         setup:
-        def page = getPage("/content/citytechinc")
+        def page = getPage("/content/avionos")
         def navigationLink = page.navigationLink
 
         expect:
-        navigationLink.href == "/content/citytechinc.html"
+        navigationLink.href == "/content/avionos.html"
         navigationLink.title == "Navigation Title"
     }
 }

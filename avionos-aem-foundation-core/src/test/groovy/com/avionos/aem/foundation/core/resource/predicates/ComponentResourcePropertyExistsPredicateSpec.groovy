@@ -8,13 +8,13 @@ class ComponentResourcePropertyExistsPredicateSpec extends FoundationSpec {
 
     def setupSpec() {
         nodeBuilder.content {
-            citytechinc("jcr:title": "CITYTECH, Inc.")
+            avionos("jcr:title": "Avionos")
         }
     }
 
     def "resource where property exists is included"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc")
+        def componentResource = getComponentResource("/content/avionos")
         def predicate = new ComponentResourcePropertyExistsPredicate("jcr:title")
 
         expect:
@@ -23,7 +23,7 @@ class ComponentResourcePropertyExistsPredicateSpec extends FoundationSpec {
 
     def "resource where property does not exist is not included"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc")
+        def componentResource = getComponentResource("/content/avionos")
         def predicate = new ComponentResourcePropertyExistsPredicate("jcr:description")
 
         expect:

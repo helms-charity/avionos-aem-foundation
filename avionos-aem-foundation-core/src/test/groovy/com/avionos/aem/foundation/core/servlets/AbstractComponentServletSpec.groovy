@@ -12,7 +12,7 @@ class AbstractComponentServletSpec extends FoundationSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component("jcr:title": "Testing Component")
                 }

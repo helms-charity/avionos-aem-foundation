@@ -24,12 +24,12 @@ class LinkInjectorSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component("jcr:title": "Testing Component",
-                        link1: "/content/citytechinc",
-                        link2: "/content/citytechinc",
-                        link3: "/content/citytechinc")
+                        link1: "/content/avionos",
+                        link2: "/content/avionos",
+                        link3: "/content/avionos")
                 }
                 child {
                     "jcr:content" { component() }
@@ -40,7 +40,7 @@ class LinkInjectorSpec extends SlingModelSpec {
 
     def "link is null if component node is null"() {
         setup:
-        def resource = resourceResolver.resolve("/content/citytechinc/jcr:content/component/sub")
+        def resource = resourceResolver.resolve("/content/avionos/jcr:content/component/sub")
         def component = resource.adaptTo(Component)
 
         expect:
@@ -49,29 +49,29 @@ class LinkInjectorSpec extends SlingModelSpec {
 
     def "link has correct path value"() {
         setup:
-        def resource = getResource("/content/citytechinc/jcr:content/component")
+        def resource = getResource("/content/avionos/jcr:content/component")
         def component = resource.adaptTo(Component)
 
         expect:
-        component.link1.path == "/content/citytechinc"
+        component.link1.path == "/content/avionos"
     }
 
     def "link has correct path value and title"() {
         setup:
-        def resource = getResource("/content/citytechinc/jcr:content/component")
+        def resource = getResource("/content/avionos/jcr:content/component")
         def component = resource.adaptTo(Component)
 
         expect:
-        component.link2.path == "/content/citytechinc"
+        component.link2.path == "/content/avionos"
         component.link2.title == "Testing Component"
     }
 
     def "inherited link has correct path value"() {
         setup:
-        def resource = getResource("/content/citytechinc/child/jcr:content/component")
+        def resource = getResource("/content/avionos/child/jcr:content/component")
         def component = resource.adaptTo(Component)
 
         expect:
-        component.link3.path == "/content/citytechinc"
+        component.link3.path == "/content/avionos"
     }
 }

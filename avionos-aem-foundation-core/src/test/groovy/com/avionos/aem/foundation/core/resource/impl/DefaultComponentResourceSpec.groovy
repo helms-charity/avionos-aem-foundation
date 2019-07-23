@@ -13,7 +13,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc("CITYTECH, Inc.") {
+            avionos("Avionos") {
                 "jcr:content"(otherPagePath: "/content/ales/esb", nonExistentPagePath: "/content/home",
                     externalPath: "http://www.reddit.com", multiValue: ["one", "two"],
                     fileReference: "/content/dam/image") {
@@ -32,7 +32,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
             }
             ales {
                 esb("ESB") {
-                    "jcr:content"(otherPagePath: "/content/citytechinc", externalPath: "http://www.reddit.com") {
+                    "jcr:content"(otherPagePath: "/content/avionos", externalPath: "http://www.reddit.com") {
                         // image(fileReference: "/content/dam/image")
                         secondimage(fileReference: "/content/dam/image")
                         fullers("sling:resourceType": "bitter")
@@ -79,7 +79,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
                 }
             }
             lagers {
-                "jcr:content"(otherPagePath: "/content/citytechinc") {
+                "jcr:content"(otherPagePath: "/content/avionos") {
                     dynamo("sling:resourceType": "us", related: "/content/lagers/jcr:content/spaten")
                     stiegl("sling:resourceType": "de")
                     spaten("sling:resourceType": "de")
@@ -134,7 +134,8 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         def componentResource = getComponentResource("/content/lagers/jcr:content/stiegl")
 
         expect:
-        componentResource.toString() == "DefaultComponentResource{path=/content/lagers/jcr:content/stiegl, properties={sling:resourceType=de, jcr:primaryType=nt:unstructured}}"
+        componentResource.toString() == "DefaultComponentResource{path=/content/lagers/jcr:content/stiegl, " +
+            "properties={sling:resourceType=de, jcr:primaryType=nt:unstructured}}"
     }
 
     def "get id"() {
@@ -145,25 +146,25 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         componentResource.id == id
 
         where:
-        path                                          | id
-        "/content/citytechinc"                        | "content-citytechinc"
-        "/content/citytechinc/jcr:content"            | "content-citytechinc"
-        "/content/citytechinc/jcr:content/malort/one" | "malort-one"
-        "/"                                           | ""
+        path                                      | id
+        "/content/avionos"                        | "content-avionos"
+        "/content/avionos/jcr:content"            | "content-avionos"
+        "/content/avionos/jcr:content/malort/one" | "malort-one"
+        "/"                                       | ""
     }
 
     def "as map"() {
         setup:
-        def map = getComponentResource("/content/citytechinc/jcr:content").asMap()
+        def map = getComponentResource("/content/avionos/jcr:content").asMap()
 
         expect:
-        map["jcr:title"] == "CITYTECH, Inc."
+        map["jcr:title"] == "Avionos"
         map["otherPagePath"] == "/content/ales/esb"
     }
 
     def "get"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.get(propertyName, defaultValue) == result
@@ -176,7 +177,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get optional"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.get(propertyName, type).present == result
@@ -190,7 +191,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as list"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getAsList("multiValue", String) == ["one", "two"]
@@ -198,7 +199,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as href"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getAsHref(propertyName).get() == href
@@ -211,7 +212,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as href strict"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getAsHref(propertyName, true).get() == href
@@ -225,7 +226,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as href returns absent where appropriate"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         !componentResource.getAsHref(propertyName).present
@@ -236,7 +237,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as mapped href"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getAsHref("otherPagePath", false, true).get() == "/ales/esb.html"
@@ -244,7 +245,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as mapped href strict"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getAsHref(propertyName, true, true).get() == href
@@ -258,7 +259,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as href for null"() {
         when:
-        getComponentResource("/content/citytechinc/jcr:content").getAsHref(null)
+        getComponentResource("/content/avionos/jcr:content").getAsHref(null)
 
         then:
         thrown NullPointerException
@@ -266,7 +267,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as link"() {
         setup:
-        def link = getComponentResource("/content/citytechinc/jcr:content").getAsLink("otherPagePath").get()
+        def link = getComponentResource("/content/avionos/jcr:content").getAsLink("otherPagePath").get()
 
         expect:
         link.path == "/content/ales/esb"
@@ -274,7 +275,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as link strict"() {
         setup:
-        def link = getComponentResource("/content/citytechinc/jcr:content").getAsLink("nonExistentPagePath", true).get()
+        def link = getComponentResource("/content/avionos/jcr:content").getAsLink("nonExistentPagePath", true).get()
 
         expect:
         link.path == "/content/home"
@@ -284,7 +285,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as mapped link"() {
         setup:
-        def link = getComponentResource("/content/citytechinc/jcr:content").getAsLink("otherPagePath", false, true).get()
+        def link = getComponentResource("/content/avionos/jcr:content").getAsLink("otherPagePath", false, true).get()
 
         expect:
         link.path == "/content/ales/esb"
@@ -293,7 +294,8 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as mapped link strict"() {
         setup:
-        def link = getComponentResource("/content/citytechinc/jcr:content").getAsLink("nonExistentPagePath", true, true).get()
+        def link = getComponentResource("/content/avionos/jcr:content").getAsLink("nonExistentPagePath", true,
+            true).get()
 
         expect:
         link.path == "/home"
@@ -303,7 +305,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as link for null"() {
         when:
-        getComponentResource("/content/citytechinc/jcr:content").getAsLink(null)
+        getComponentResource("/content/avionos/jcr:content").getAsLink(null)
 
         then:
         thrown NullPointerException
@@ -311,7 +313,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as link for non-existent property"() {
         setup:
-        def linkOptional = getComponentResource("/content/citytechinc/jcr:content").getAsLink("beer")
+        def linkOptional = getComponentResource("/content/avionos/jcr:content").getAsLink("beer")
 
         expect:
         !linkOptional.present
@@ -319,7 +321,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get as page"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getAsPage("otherPagePath").get().path == "/content/ales/esb"
@@ -341,10 +343,10 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get href"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
-        componentResource.href == "/content/citytechinc/jcr:content.html"
+        componentResource.href == "/content/avionos/jcr:content.html"
     }
 
     def "get image reference"() {
@@ -355,9 +357,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         componentResource.imageReference.present == isPresent
 
         where:
-        path                               | isPresent
-        "/content/citytechinc/jcr:content" | true
-        "/content/ales/esb/jcr:content"    | false
+        path                            | isPresent
+        "/content/avionos/jcr:content"  | true
+        "/content/ales/esb/jcr:content" | false
     }
 
     def "get self image reference"() {
@@ -369,8 +371,8 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         where:
         path                                       | isSelf | isPresent
-        "/content/citytechinc/jcr:content"         | false  | true
-        "/content/citytechinc/jcr:content"         | true   | true
+        "/content/avionos/jcr:content"             | false  | true
+        "/content/avionos/jcr:content"             | true   | true
         "/content/ales/esb/jcr:content"            | false  | false
         "/content/ales/esb/jcr:content"            | true   | false
         "/content/ales/esb/jcr:content/greeneking" | true   | false
@@ -395,7 +397,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get named image reference"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getImageReference("nsfwImage").get() == "omg.png"
@@ -404,34 +406,34 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get link"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
-        componentResource.link.path == "/content/citytechinc/jcr:content"
+        componentResource.link.path == "/content/avionos/jcr:content"
     }
 
     def "get link builder"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
-        componentResource.linkBuilder.build().path == "/content/citytechinc/jcr:content"
+        componentResource.linkBuilder.build().path == "/content/avionos/jcr:content"
     }
 
     def "get path"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
-        componentResource.path == "/content/citytechinc/jcr:content"
+        componentResource.path == "/content/avionos/jcr:content"
     }
 
     def "get resource"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
-        componentResource.resource.path == "/content/citytechinc/jcr:content"
+        componentResource.resource.path == "/content/avionos/jcr:content"
     }
 
     def "has image"() {
@@ -442,9 +444,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         componentResource.hasImage == hasImage
 
         where:
-        path                               | hasImage
-        "/content/citytechinc/jcr:content" | true
-        "/content/ales/esb/jcr:content"    | false
+        path                            | hasImage
+        "/content/avionos/jcr:content"  | true
+        "/content/ales/esb/jcr:content" | false
     }
 
     def "has named image"() {
@@ -455,17 +457,17 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         componentResource.isHasImage(name) == hasImage
 
         where:
-        path                               | name          | hasImage
-        "/content/citytechinc/jcr:content" | "image"       | true
-        "/content/citytechinc/jcr:content" | "secondimage" | true
-        "/content/citytechinc/jcr:content" | "thirdimage"  | false
-        "/content/citytechinc/jcr:content" | "fourthimage" | false
-        "/content/ales/esb/jcr:content"    | "image"       | false
+        path                            | name          | hasImage
+        "/content/avionos/jcr:content"  | "image"       | true
+        "/content/avionos/jcr:content"  | "secondimage" | true
+        "/content/avionos/jcr:content"  | "thirdimage"  | false
+        "/content/avionos/jcr:content"  | "fourthimage" | false
+        "/content/ales/esb/jcr:content" | "image"       | false
     }
 
     def "get image rendition returns absent"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         !componentResource.getImageRendition("sfwImage", "").present
@@ -473,7 +475,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get image rendition"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         !componentResource.getImageRendition("").present
@@ -481,7 +483,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get named image rendition"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getImageRendition(name, renditionName).present == result
@@ -502,9 +504,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         componentResource.parent.get().path == parentPath
 
         where:
-        path                               | parentPath
-        "/content/citytechinc/jcr:content" | "/content/citytechinc"
-        "/content/citytechinc"             | "/content"
+        path                           | parentPath
+        "/content/avionos/jcr:content" | "/content/avionos"
+        "/content/avionos"             | "/content"
     }
 
     def "get parent returns null for root resource"() {
@@ -527,9 +529,11 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         path                                               | excludeCurrentResource | ancestorPath
         "/content/inheritance/jcr:content"                 | false                  | "/content/inheritance/jcr:content"
         "/content/inheritance/child/jcr:content"           | false                  | "/content/inheritance/jcr:content"
-        "/content/inheritance/child/jcr:content/component" | false                  | "/content/inheritance/jcr:content/component"
+        "/content/inheritance/child/jcr:content/component" | false                  |
+            "/content/inheritance/jcr:content/component"
         "/content/inheritance/child/jcr:content"           | true                   | "/content/inheritance/jcr:content"
-        "/content/inheritance/child/jcr:content/component" | true                   | "/content/inheritance/jcr:content/component"
+        "/content/inheritance/child/jcr:content/component" | true                   |
+            "/content/inheritance/jcr:content/component"
     }
 
     def "find ancestor with property returns absent when current resource excluded"() {
@@ -582,7 +586,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "find descendants"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
         def predicate = new ComponentResourcePropertyExistsPredicate("sling:resourceType")
 
         expect:
@@ -598,9 +602,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         where:
         path                                 | propertyName    | href
-        "/content/ales/esb/jcr:content"      | "otherPagePath" | "/content/citytechinc.html"
+        "/content/ales/esb/jcr:content"      | "otherPagePath" | "/content/avionos.html"
         "/content/ales/esb/suds/jcr:content" | "otherPagePath" | ""
-        "/content/ales/esb/lace/jcr:content" | "otherPagePath" | "/content/citytechinc.html"
+        "/content/ales/esb/lace/jcr:content" | "otherPagePath" | "/content/avionos.html"
         "/content/ales/esb/jcr:content"      | "externalPath"  | "http://www.reddit.com"
         "/content/ales/esb/suds/jcr:content" | "externalPath"  | "http://www.reddit.com"
         "/content/ales/esb/lace/jcr:content" | "externalPath"  | "http://www.reddit.com"
@@ -628,9 +632,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         where:
         path                                 | propertyName    | href
-        "/content/ales/esb/jcr:content"      | "otherPagePath" | "/content/citytechinc.html"
+        "/content/ales/esb/jcr:content"      | "otherPagePath" | "/content/avionos.html"
         "/content/ales/esb/suds/jcr:content" | "otherPagePath" | ""
-        "/content/ales/esb/lace/jcr:content" | "otherPagePath" | "/content/citytechinc.html"
+        "/content/ales/esb/lace/jcr:content" | "otherPagePath" | "/content/avionos.html"
         "/content/ales/esb/jcr:content"      | "externalPath"  | "http://www.reddit.com"
         "/content/ales/esb/suds/jcr:content" | "externalPath"  | "http://www.reddit.com"
         "/content/ales/esb/lace/jcr:content" | "externalPath"  | "http://www.reddit.com"
@@ -654,7 +658,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         def componentResource = getComponentResource("/content/ales/esb/lace/jcr:content")
 
         expect:
-        componentResource.getAsPageInherited("otherPagePath").get().path == "/content/citytechinc"
+        componentResource.getAsPageInherited("otherPagePath").get().path == "/content/avionos"
         !componentResource.getAsPageInherited("nonExistentPagePath").present
     }
 
@@ -667,8 +671,10 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         where:
         path                                                       | inheritedNodePath
-        "/content/ales/esb/suds/pint/keg/jcr:content/container"    | "/content/ales/esb/suds/jcr:content/container/child1"
-        "/content/ales/esb/suds/pint/barrel/jcr:content/container" | "/content/ales/esb/suds/pint/barrel/jcr:content/container/child1"
+        "/content/ales/esb/suds/pint/keg/jcr:content/container"    |
+            "/content/ales/esb/suds/jcr:content/container/child1"
+        "/content/ales/esb/suds/pint/barrel/jcr:content/container" |
+            "/content/ales/esb/suds/pint/barrel/jcr:content/container/child1"
     }
 
     def "get component resource inherited is absent when ancestor not found"() {
@@ -716,7 +722,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get component resource at relative path"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getComponentResource("whiskey").present
@@ -731,14 +737,14 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         componentResource.componentResources.size() == size
 
         where:
-        path                                    | size
-        "/content/citytechinc/jcr:content"      | 8
-        "/content/citytechinc/jcr:content/beer" | 0
+        path                                | size
+        "/content/avionos/jcr:content"      | 8
+        "/content/avionos/jcr:content/beer" | 0
     }
 
     def "get component resources for predicate"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content/malort")
+        def componentResource = getComponentResource("/content/avionos/jcr:content/malort")
         def predicate = new Predicate<ComponentResource>() {
             @Override
             boolean test(ComponentResource input) {
@@ -752,7 +758,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get component resources at relative path"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getComponentResources(relativePath).size() == size
@@ -765,7 +771,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "get component resources at relative path for resource type"() {
         setup:
-        def componentResource = getComponentResource("/content/citytechinc/jcr:content")
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
 
         expect:
         componentResource.getComponentResources("malort", resourceType).size() == size

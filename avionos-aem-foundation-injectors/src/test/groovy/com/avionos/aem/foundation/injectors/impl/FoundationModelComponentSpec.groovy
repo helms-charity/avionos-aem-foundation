@@ -8,7 +8,7 @@ class FoundationModelComponentSpec extends SlingModelSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc {
+            avionos {
                 "jcr:content" {
                     component("jcr:title": "Testing Component")
                 }
@@ -18,7 +18,7 @@ class FoundationModelComponentSpec extends SlingModelSpec {
 
     def "get title from component"() {
         setup:
-        def component = getResource("/content/citytechinc/jcr:content/component").adaptTo(FoundationModelComponent)
+        def component = getResource("/content/avionos/jcr:content/component").adaptTo(FoundationModelComponent)
 
         expect:
         component.title == "Testing Component"

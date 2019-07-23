@@ -13,7 +13,7 @@ class DefaultFoundationPageManagerSpec extends FoundationSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            citytechinc("CITYTECH, Inc.") {
+            avionos("Avionos") {
                 "jcr:content"(otherPagePath: "/content/ales/esb") {
                     component {
                         one("sling:resourceType": "one", "cq:tags": "/etc/tags/tag3")
@@ -47,9 +47,9 @@ class DefaultFoundationPageManagerSpec extends FoundationSpec {
         }
 
         def taggableNodePaths = [
-            "/content/citytechinc/child/jcr:content",
+            "/content/avionos/child/jcr:content",
             "/content/other/jcr:content",
-            "/content/citytechinc/jcr:content/component/one"
+            "/content/avionos/jcr:content/component/one"
         ]
 
         taggableNodePaths.each { path ->

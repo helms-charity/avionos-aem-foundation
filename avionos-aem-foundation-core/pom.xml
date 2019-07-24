@@ -40,13 +40,9 @@
                         <excludes>
                             <exclude>com/avionos/aem/foundation/core/bindings/*</exclude>
                             <exclude>com/avionos/aem/foundation/core/components/*</exclude>
-                            <exclude>com/avionos/aem/foundation/core/components/annotations/*</exclude>
                             <exclude>com/avionos/aem/foundation/core/constants/*</exclude>
-                            <exclude>com/avionos/aem/foundation/core/filters/*</exclude>
-                            <exclude>com/avionos/aem/foundation/core/jmx/**/*</exclude>
-                            <exclude>com/avionos/aem/foundation/core/node/*</exclude>
+                            <!--<exclude>com/avionos/aem/foundation/core/resource/*</exclude>-->
                             <exclude>com/avionos/aem/foundation/core/servlets/AbstractComponentServlet.class</exclude>
-                            <exclude>com/avionos/aem/foundation/core/servlets/paragraphs/*</exclude>
                         </excludes>
                         <ignoreTrivial>true</ignoreTrivial>
                     </instrumentation>

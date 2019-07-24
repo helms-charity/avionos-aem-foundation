@@ -6,7 +6,7 @@ import org.apache.sling.api.SlingHttpServletRequest
 import javax.script.Bindings
 
 /**
- * Additional bindings to add to the script context (e.g. for consumption in Sightly templates).
+ * Additional bindings to add to the script context (e.g. for consumption in HTL templates).
  */
 final class WCMModeBindings implements Bindings {
 

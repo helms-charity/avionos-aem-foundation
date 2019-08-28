@@ -12,6 +12,7 @@ import com.avionos.aem.foundation.core.link.builders.factory.LinkBuilderFactory
 import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyExistsPredicate
 import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyValuePredicate
 import com.day.cq.commons.Filter
+import com.day.cq.tagging.Tag
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.commons.DeepResourceIterator
@@ -150,6 +151,12 @@ final class DefaultFoundationPage implements FoundationPage {
     }
 
     @Override
+    <AdapterType> List<AdapterType> getAsTypeList(String propertyName, Class<AdapterType> type) {
+        getInternal({ componentResource -> componentResource.getAsTypeList(propertyName, type) },
+            Collections.emptyList())
+    }
+
+    @Override
     Optional<String> getImageReference(boolean isSelf) {
         getInternal({ componentResource -> componentResource.getImageReference(isSelf) }, Optional.empty())
     }
@@ -172,6 +179,11 @@ final class DefaultFoundationPage implements FoundationPage {
     @Override
     Optional<String> getImageRendition(String name, String renditionName) {
         getInternal({ componentResource -> componentResource.getImageRendition(name, renditionName) }, Optional.empty())
+    }
+
+    @Override
+    List<Tag> getTags(String propertyName) {
+        getInternal({ componentResource -> componentResource.getTags(propertyName) }, Collections.emptyList())
     }
 
     @Override

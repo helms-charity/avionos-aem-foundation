@@ -16,16 +16,16 @@ class DefaultFoundationPageManagerSpec extends FoundationSpec {
             avionos("Avionos") {
                 "jcr:content"(otherPagePath: "/content/ales/esb") {
                     component {
-                        one("sling:resourceType": "one", "cq:tags": "/etc/tags/tag3")
+                        one("sling:resourceType": "one", "cq:tags": "/content/cq:tags/tag3")
                         two("sling:resourceType": "two")
                     }
                 }
                 child {
-                    "jcr:content"(hideInNav: true, "cq:template": "template", "cq:tags": "/etc/tags/tag1")
+                    "jcr:content"(hideInNav: true, "cq:template": "template", "cq:tags": "/content/cq:tags/tag1")
                 }
             }
             other {
-                "jcr:content"("cq:template": "template", "cq:tags": ["/etc/tags/tag1", "/etc/tags/tag2"])
+                "jcr:content"("cq:template": "template", "cq:tags": ["/content/cq:tags/tag1", "/content/cq:tags/tag2"])
             }
             hierarchy {
                 one {
@@ -38,8 +38,8 @@ class DefaultFoundationPageManagerSpec extends FoundationSpec {
             }
         }
 
-        nodeBuilder.etc {
-            tags {
+        nodeBuilder.content {
+            "cq:tags"("sling:Folder") {
                 tag1(NT_TAG)
                 tag2(NT_TAG)
                 tag3(NT_TAG)
@@ -74,17 +74,17 @@ class DefaultFoundationPageManagerSpec extends FoundationSpec {
 
     def "find pages for tag IDs"() {
         expect:
-        pageManager.findPages("/content", ["/etc/tags/tag1"], true).size() == 2
+        pageManager.findPages("/content", ["/content/cq:tags/tag1"], true).size() == 2
     }
 
     def "find pages for tag IDs matching all"() {
         expect:
-        pageManager.findPages("/content", ["/etc/tags/tag1", "/etc/tags/tag2"], false).size() == 1
+        pageManager.findPages("/content", ["/content/cq:tags/tag1", "/content/cq:tags/tag2"], false).size() == 1
     }
 
     def "tagged non-page node is excluded from search results"() {
         expect:
-        !pageManager.findPages("/content", ["/etc/tags/tag3"], true)
+        !pageManager.findPages("/content", ["/content/cq:tags/tag3"], true)
     }
 
     def "search"() {

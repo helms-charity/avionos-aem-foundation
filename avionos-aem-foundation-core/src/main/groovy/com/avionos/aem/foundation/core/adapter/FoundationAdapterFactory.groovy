@@ -1,6 +1,5 @@
 package com.avionos.aem.foundation.core.adapter
 
-
 import com.avionos.aem.foundation.api.page.FoundationPage
 import com.avionos.aem.foundation.api.page.FoundationPageManager
 import com.avionos.aem.foundation.api.resource.ComponentResource

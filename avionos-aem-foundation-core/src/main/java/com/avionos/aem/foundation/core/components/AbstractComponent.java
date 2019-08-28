@@ -2,8 +2,9 @@ package com.avionos.aem.foundation.core.components;
 
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.link.builders.LinkBuilder;
-import com.avionos.aem.foundation.api.resource.ComponentResource;
 import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.resource.ComponentResource;
+import com.day.cq.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
@@ -258,6 +259,11 @@ public abstract class AbstractComponent implements ComponentResource {
     }
 
     @Override
+    public <AdapterType> List<AdapterType> getAsTypeList(final String propertyName, final Class<AdapterType> type) {
+        return componentResource.getAsTypeList(propertyName, type);
+    }
+
+    @Override
     public Optional<String> getImageReference(final boolean isSelf) {
         return componentResource.getImageReference(isSelf);
     }
@@ -280,6 +286,11 @@ public abstract class AbstractComponent implements ComponentResource {
     @Override
     public Optional<String> getImageRendition(final String name, final String renditionName) {
         return componentResource.getImageRendition(name, renditionName);
+    }
+
+    @Override
+    public List<Tag> getTags(final String propertyName) {
+        return componentResource.getTags(propertyName);
     }
 
     @Override
@@ -315,12 +326,14 @@ public abstract class AbstractComponent implements ComponentResource {
     }
 
     @Override
-    public <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName, final V propertyValue) {
+    public <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName,
+        final V propertyValue) {
         return componentResource.findAncestorWithPropertyValue(propertyName, propertyValue);
     }
 
     @Override
-    public <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName, final V propertyValue,
+    public <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName,
+        final V propertyValue,
         final boolean excludeCurrentResource) {
         return componentResource.findAncestorWithPropertyValue(propertyName, propertyValue, excludeCurrentResource);
     }

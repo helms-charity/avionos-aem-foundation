@@ -17,6 +17,8 @@ import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap
 import com.day.cq.commons.inherit.InheritanceValueMap
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.dam.api.Asset
+import com.day.cq.tagging.Tag
+import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.foundation.Image
@@ -80,6 +82,13 @@ final class DefaultComponentResource implements ComponentResource {
     @Override
     <AdapterType> Optional<AdapterType> getAsType(String propertyName, Class<AdapterType> type) {
         getAsTypeOptional(properties.get(checkNotNull(propertyName), ""), type)
+    }
+
+    @Override
+    <AdapterType> List<AdapterType> getAsTypeList(String propertyName, Class<AdapterType> type) {
+        properties.get(checkNotNull(propertyName), new String[0])
+            .collect { path -> getAsTypeOptional(path, type).orElse(null) }
+            .findAll()
     }
 
     @Override
@@ -193,6 +202,13 @@ final class DefaultComponentResource implements ComponentResource {
         }
 
         imageRenditionOptional
+    }
+
+    @Override
+    List<Tag> getTags(String propertyName) {
+        def tagManager = resource.resourceResolver.adaptTo(TagManager)
+
+        getAsList(propertyName, String).collect { tagId -> tagManager.resolve(tagId) }.findAll()
     }
 
     @Override

@@ -42,8 +42,8 @@ class TagDataSourceServletSpec extends FoundationSpec {
     }
 
     def setupSpec() {
-        nodeBuilder.etc {
-            tags {
+        nodeBuilder.content {
+            "cq:tags"("sling:Folder") {
                 beers(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Beers") {
                     lager(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Lager")
                     stout(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Stout")

@@ -2,6 +2,7 @@ package com.avionos.aem.foundation.api;
 
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.day.cq.tagging.Tag;
 import org.apache.sling.api.resource.ValueMap;
 
 import java.util.List;
@@ -135,7 +136,7 @@ public interface Accessible {
 
     /**
      * Get an <code>Optional</code> type instance for a property on this resource containing the path of another
-     * <code>Resource</code> in the repository.
+     * <code>Resource</code>.
      *
      * @param propertyName name of property containing a resource path
      * @param type type to adapt from resource
@@ -144,6 +145,18 @@ public interface Accessible {
      * the resource does not adapt to the provided type
      */
     <AdapterType> Optional<AdapterType> getAsType(String propertyName, Class<AdapterType> type);
+
+    /**
+     * Get a list of type instances for a property on this resource containing an array of paths to other
+     * <code>Resource</code>s.
+     *
+     * @param propertyName name of property containing resource paths
+     * @param type type to adapt from resource
+     * @param <AdapterType> adapter class that is adaptable from <code>Resource</code>
+     * @return list of instances of the specified type, or empty list if either the property does not exist or the
+     * resources for the paths do not adapt to the provided type
+     */
+    <AdapterType> List<AdapterType> getAsTypeList(String propertyName, Class<AdapterType> type);
 
     /**
      * Get the referenced DAM asset path for the default image (named "image") for this component.
@@ -180,4 +193,12 @@ public interface Accessible {
      * @return <code>Optional</code> image rendition path
      */
     Optional<String> getImageRendition(String name, String renditionName);
+
+    /**
+     * Get a list of tags for the given property name.
+     *
+     * @param propertyName name of property containing an array of tag IDs
+     * @return list of tags or empty list if not found
+     */
+    List<Tag> getTags(String propertyName);
 }

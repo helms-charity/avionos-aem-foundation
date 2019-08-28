@@ -81,7 +81,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
             lagers {
                 "jcr:content"(otherPagePath: "/content/avionos") {
                     dynamo("sling:resourceType": "us", related: "/content/lagers/jcr:content/spaten")
-                    stiegl("sling:resourceType": "de")
+                    stiegl("sling:resourceType": "de", related: ["/content/lagers/jcr:content/spaten", "/content/lagers/jcr:content/dynamo"] as String[])
                     spaten("sling:resourceType": "de")
                 }
             }
@@ -131,10 +131,10 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
     def "to string"() {
         setup:
-        def componentResource = getComponentResource("/content/lagers/jcr:content/stiegl")
+        def componentResource = getComponentResource("/content/lagers/jcr:content/spaten")
 
         expect:
-        componentResource.toString() == "DefaultComponentResource{path=/content/lagers/jcr:content/stiegl, " +
+        componentResource.toString() == "DefaultComponentResource{path=/content/lagers/jcr:content/spaten, " +
             "properties={sling:resourceType=de, jcr:primaryType=nt:unstructured}}"
     }
 
@@ -339,6 +339,21 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         type              | result
         ComponentResource | true
         Asset             | false
+    }
+
+    def "get as type list"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getAsTypeList("related", type).size() == size
+
+        where:
+        path                                 | type              | size
+        "/content/lagers/jcr:content/stiegl" | ComponentResource | 2
+        "/content/lagers/jcr:content/stiegl" | Asset             | 0
+        "/content/lagers/jcr:content/spaten" | ComponentResource | 0
+        "/content/lagers/jcr:content/spaten" | Asset             | 0
     }
 
     def "get href"() {

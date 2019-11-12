@@ -1,11 +1,10 @@
 package com.avionos.aem.foundation.core.servlets.optionsprovider;
 
-import com.avionos.aem.foundation.api.request.ComponentServletRequest;
-import com.avionos.aem.foundation.core.servlets.AbstractComponentServlet;
+import com.avionos.aem.foundation.core.servlets.AbstractJsonResponseServlet;
 import com.google.common.collect.ImmutableMap;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * be rendered in a selection box.  The implementing class determines how these options are retrieved from the
  * repository (or external provider, such as a web service).
  */
-public abstract class AbstractOptionsProviderServlet extends AbstractComponentServlet {
+public abstract class AbstractOptionsProviderServlet extends AbstractJsonResponseServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,30 +25,30 @@ public abstract class AbstractOptionsProviderServlet extends AbstractComponentSe
      * handled by the implementing class and will vary depending on the requirements for the component dialog calling
      * this servlet.
      *
-     * @param request component servlet request
+     * @param request Sling request
      * @return list of options as determined by the implementing class
      */
-    protected abstract List<Option> getOptions(final ComponentServletRequest request);
+    protected abstract List<Option> getOptions(final SlingHttpServletRequest request);
 
     /**
-     * @param request component servlet request
+     * @param request Sling request
      * @return Optional name of root JSON object containing options
      */
-    protected abstract Optional<String> getOptionsRoot(final ComponentServletRequest request);
+    protected abstract Optional<String> getOptionsRoot(final SlingHttpServletRequest request);
 
-    protected final void processGet(final ComponentServletRequest request) throws ServletException, IOException {
+    @Override
+    protected final void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
+        throws IOException {
         final List<Option> options = getOptions(request);
 
         checkNotNull(options, "option list must not be null");
 
         final Optional<String> optionsRoot = getOptionsRoot(request);
 
-        final SlingHttpServletResponse slingResponse = request.getSlingResponse();
-
         if (optionsRoot.isPresent()) {
-            writeJsonResponse(slingResponse, ImmutableMap.of(optionsRoot.get(), options));
+            writeJsonResponse(response, ImmutableMap.of(optionsRoot.get(), options));
         } else {
-            writeJsonResponse(slingResponse, options);
+            writeJsonResponse(response, options);
         }
     }
 }

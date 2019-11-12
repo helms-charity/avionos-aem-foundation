@@ -1,8 +1,8 @@
 package com.avionos.aem.foundation.core.servlets.optionsprovider
 
-import com.avionos.aem.foundation.api.request.ComponentServletRequest
 import com.avionos.aem.foundation.core.specs.FoundationSpec
 import groovy.json.JsonBuilder
+import org.apache.sling.api.SlingHttpServletRequest
 
 class OptionsProviderServletSpec extends FoundationSpec {
 
@@ -15,12 +15,12 @@ class OptionsProviderServletSpec extends FoundationSpec {
     class NoOptionsProviderServlet extends AbstractOptionsProviderServlet {
 
         @Override
-        List<Option> getOptions(ComponentServletRequest request) {
+        List<Option> getOptions(SlingHttpServletRequest request) {
             []
         }
 
         @Override
-        Optional<String> getOptionsRoot(ComponentServletRequest request) {
+        Optional<String> getOptionsRoot(SlingHttpServletRequest request) {
             Optional.empty()
         }
     }
@@ -28,12 +28,12 @@ class OptionsProviderServletSpec extends FoundationSpec {
     class RootOptionsProviderServlet extends AbstractOptionsProviderServlet {
 
         @Override
-        List<Option> getOptions(ComponentServletRequest request) {
+        List<Option> getOptions(SlingHttpServletRequest request) {
             OPTIONS
         }
 
         @Override
-        Optional<String> getOptionsRoot(ComponentServletRequest request) {
+        Optional<String> getOptionsRoot(SlingHttpServletRequest request) {
             Optional.of("root")
         }
     }
@@ -41,12 +41,12 @@ class OptionsProviderServletSpec extends FoundationSpec {
     class NoRootOptionsProviderServlet extends AbstractOptionsProviderServlet {
 
         @Override
-        List<Option> getOptions(ComponentServletRequest request) {
+        List<Option> getOptions(SlingHttpServletRequest request) {
             OPTIONS
         }
 
         @Override
-        Optional<String> getOptionsRoot(ComponentServletRequest request) {
+        Optional<String> getOptionsRoot(SlingHttpServletRequest request) {
             Optional.empty()
         }
     }

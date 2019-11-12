@@ -3,10 +3,11 @@ package com.avionos.aem.foundation.core.servlets.datasource;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-import com.avionos.aem.foundation.api.request.ComponentServletRequest;
-import com.avionos.aem.foundation.core.servlets.AbstractComponentServlet;
+import com.avionos.aem.foundation.core.servlets.AbstractJsonResponseServlet;
 import com.avionos.aem.foundation.core.servlets.optionsprovider.Option;
 import com.google.common.collect.Maps;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -27,7 +28,7 @@ import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;
  * source.  The implementing class determines how these options are retrieved from the repository (or external provider,
  * such as a web service).
  */
-public abstract class AbstractOptionsDataSourceServlet extends AbstractComponentServlet {
+public abstract class AbstractOptionsDataSourceServlet extends AbstractJsonResponseServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,12 +37,13 @@ public abstract class AbstractOptionsDataSourceServlet extends AbstractComponent
      * handled by the implementing class and will vary depending on the requirements for the component dialog calling
      * this servlet.
      *
-     * @param request component servlet request
+     * @param request Sling request
      * @return list of options as determined by the implementing class
      */
-    protected abstract List<Option> getOptions(final ComponentServletRequest request);
+    protected abstract List<Option> getOptions(final SlingHttpServletRequest request);
 
-    protected final void processGet(final ComponentServletRequest request) {
+    @Override
+    protected final void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response) {
         final ResourceResolver resourceResolver = request.getResourceResolver();
 
         final List<Option> options = getOptions(request);
@@ -60,6 +62,6 @@ public abstract class AbstractOptionsDataSourceServlet extends AbstractComponent
 
         final DataSource dataSource = new SimpleDataSource(resources.iterator());
 
-        request.getSlingRequest().setAttribute(DataSource.class.getName(), dataSource);
+        request.setAttribute(DataSource.class.getName(), dataSource);
     }
 }

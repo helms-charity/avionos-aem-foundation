@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-public class FoundationPageIterator implements Iterator<FoundationPage> {
+public final class FoundationPageIterator implements Iterator<FoundationPage> {
 
     private FoundationPage nextPage;
 

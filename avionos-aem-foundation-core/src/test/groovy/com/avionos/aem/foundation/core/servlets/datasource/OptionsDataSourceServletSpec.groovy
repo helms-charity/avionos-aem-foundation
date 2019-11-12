@@ -1,7 +1,6 @@
 package com.avionos.aem.foundation.core.servlets.datasource
 
 import com.adobe.granite.ui.components.ds.DataSource
-import com.avionos.aem.foundation.api.request.ComponentServletRequest
 import com.avionos.aem.foundation.core.servlets.optionsprovider.Option
 import com.avionos.aem.foundation.core.specs.FoundationSpec
 import org.apache.sling.api.SlingHttpServletRequest
@@ -15,7 +14,7 @@ class OptionsDataSourceServletSpec extends FoundationSpec {
     class NoOptionsProviderServlet extends AbstractOptionsDataSourceServlet {
 
         @Override
-        List<Option> getOptions(ComponentServletRequest request) {
+        List<Option> getOptions(SlingHttpServletRequest request) {
             []
         }
     }
@@ -23,7 +22,7 @@ class OptionsDataSourceServletSpec extends FoundationSpec {
     class BasicOptionsProviderServlet extends AbstractOptionsDataSourceServlet {
 
         @Override
-        List<Option> getOptions(ComponentServletRequest request) {
+        List<Option> getOptions(SlingHttpServletRequest request) {
             OPTIONS
         }
     }

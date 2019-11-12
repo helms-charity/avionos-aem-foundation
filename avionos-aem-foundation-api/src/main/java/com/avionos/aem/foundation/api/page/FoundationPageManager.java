@@ -18,6 +18,61 @@ import java.util.function.Predicate;
 public interface FoundationPageManager extends PageManager {
 
     /**
+     * Find all descendant pages of the given path containing the specified tags.
+     *
+     * @param rootPath root path
+     * @param tagIds set of tag IDs
+     * @param matchOne if true, 'OR' the specified tag IDs, 'AND' otherwise
+     * @return pages containing specified tags
+     */
+    List<FoundationPage> findPages(String rootPath, Collection<String> tagIds, boolean matchOne);
+
+    /**
+     * Find all descendant pages of the given path matching the template path.
+     *
+     * @param rootPath root path
+     * @param templatePath template path
+     * @return pages matching specified template
+     */
+    List<FoundationPage> findPages(String rootPath, String templatePath);
+
+    /**
+     * Find all descendant pages of the given path that match the predicate.
+     *
+     * @param rootPath root path
+     * @param predicate predicate to determine if a page should be included in the result list
+     * @return pages matching filter criteria
+     */
+    List<FoundationPage> findPages(String rootPath, Predicate<FoundationPage> predicate);
+
+    /**
+     * Decorate the given page.
+     *
+     * @param page non-null CQ page
+     * @return decorated page
+     */
+    FoundationPage getPage(Page page);
+
+    /**
+     * Search for pages using a query.
+     *
+     * @param query JCR query
+     * @return list of pages for the query result
+     */
+    List<FoundationPage> search(Query query);
+
+    /**
+     * Search for pages using a query with the given result limit.
+     *
+     * @param query JCR query
+     * @param limit result limit
+     * @return list of pages for the query result
+     */
+    List<FoundationPage> search(Query query, int limit);
+
+    // overrides
+
+    /**
      * Copies the given page to the new destination and automatically saves the modifications
      *
      * @param page the page to copy
@@ -79,34 +134,6 @@ public interface FoundationPageManager extends PageManager {
         throws WCMException;
 
     /**
-     * Find all descendant pages of the given path containing the specified tags.
-     *
-     * @param rootPath root path
-     * @param tagIds set of tag IDs
-     * @param matchOne if true, 'OR' the specified tag IDs, 'AND' otherwise
-     * @return pages containing specified tags
-     */
-    List<FoundationPage> findPages(String rootPath, Collection<String> tagIds, boolean matchOne);
-
-    /**
-     * Find all descendant pages of the given path matching the template path.
-     *
-     * @param rootPath root path
-     * @param templatePath template path
-     * @return pages matching specified template
-     */
-    List<FoundationPage> findPages(String rootPath, String templatePath);
-
-    /**
-     * Find all descendant pages of the given path that match the predicate.
-     *
-     * @param rootPath root path
-     * @param predicate predicate to determine if a page should be included in the result list
-     * @return pages matching filter criteria
-     */
-    List<FoundationPage> findPages(String rootPath, Predicate<FoundationPage> predicate);
-
-    /**
      * Returns the page that contains this resource. If the resource is a page the resource is returned. Otherwise it
      * walks up the parent resources until a page is found.
      *
@@ -125,14 +152,6 @@ public interface FoundationPageManager extends PageManager {
      */
     @Override
     FoundationPage getContainingPage(String path);
-
-    /**
-     * Decorate the given page.
-     *
-     * @param page non-null CQ page
-     * @return decorated page
-     */
-    FoundationPage getPage(Page page);
 
     /**
      * Convenience method that returns the page at the given path. If the resource at that path does not exist or is not
@@ -198,21 +217,4 @@ public interface FoundationPageManager extends PageManager {
      */
     @Override
     FoundationPage restoreTree(String path, Calendar date) throws WCMException;
-
-    /**
-     * Search for pages using a query.
-     *
-     * @param query JCR query
-     * @return list of pages for the query result
-     */
-    List<FoundationPage> search(Query query);
-
-    /**
-     * Search for pages using a query with the given result limit.
-     *
-     * @param query JCR query
-     * @param limit result limit
-     * @return list of pages for the query result
-     */
-    List<FoundationPage> search(Query query, int limit);
 }

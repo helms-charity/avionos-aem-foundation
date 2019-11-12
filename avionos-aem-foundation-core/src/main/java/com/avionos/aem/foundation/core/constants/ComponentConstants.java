@@ -6,11 +6,6 @@ package com.avionos.aem.foundation.core.constants;
 public final class ComponentConstants {
 
     /**
-     * Relative path to content components.
-     */
-    public static final String COMPONENT_PATH_CONTENT = "/content";
-
-    /**
      * Default page/component image name.
      */
     public static final String DEFAULT_IMAGE_NAME = "image";
@@ -19,11 +14,6 @@ public final class ComponentConstants {
      * Component group that is hidden from the Sidekick.
      */
     public static final String GROUP_HIDDEN = ".hidden";
-
-    /**
-     * Conventional node/resource name for a main paragraph system.
-     */
-    public static final String NODE_NAME_PAR = "par";
 
     /**
      * Base resource type for all components.
@@ -36,13 +26,8 @@ public final class ComponentConstants {
     public static final String RESOURCE_TYPE_PARSYS = "foundation/components/parsys";
 
     /**
-     * Property name in component descriptor containing annotated class name.
-     */
-    public static final String PROPERTY_CLASS_NAME = "className";
-
-    /**
-     * Edit bar property. Displays the static text value, e.g. to show "Breadcrumb" in the edit bar for a
-     * component, you would use EDIT_BAR_TEXT + "Breadcrumb".
+     * Edit bar property. Displays the static text value, e.g. to show "Breadcrumb" in the edit bar for a component, you
+     * would use EDIT_BAR_TEXT + "Breadcrumb".
      */
     public static final String EDIT_BAR_TEXT = "text: ";
 
@@ -69,7 +54,8 @@ public final class ComponentConstants {
     public static final String EDIT_BAR_INSERT = "insert";
 
     /**
-     * Edit bar property. Adds an annotate button to the edit bar that, when clicked, allows the component to be annotated.
+     * Edit bar property. Adds an annotate button to the edit bar that, when clicked, allows the component to be
+     * annotated.
      */
     public static final String EDIT_BAR_ANNOTATE = "annotate";
 

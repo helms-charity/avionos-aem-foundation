@@ -167,7 +167,7 @@ public interface FoundationPage extends Page, Accessible, Inheritable, Linkable,
      */
     Optional<String> getTitle(TitleType titleType);
 
-    // overrides for returning decorated types
+    // overrides
 
     /**
      * Returns the absolute parent page. If no page exists at that level,

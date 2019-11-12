@@ -77,6 +77,47 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         }
     }
 
+    def "get link"() {
+        setup:
+        def link = getPage("/content/avionos").link
+
+        expect:
+        link.title == "Avionos"
+        link.href == "/content/avionos.html"
+    }
+
+    def "get link for title type"() {
+        setup:
+        def link = getPage(path).getLink(TitleType.NAVIGATION_TITLE)
+
+        expect:
+        link.title == title
+
+        where:
+        path                   | title
+        "/content/avionos"     | "Navigation Title"
+        "/content/inheritance" | "Inheritance"
+    }
+
+    def "get navigation link"() {
+        setup:
+        def link = getPage("/content/avionos").getNavigationLink(active)
+
+        expect:
+        link.active == active
+
+        where:
+        active << [true, false]
+    }
+
+    def "get href"() {
+        setup:
+        def page = getPage("/content/avionos")
+
+        expect:
+        page.href == "/content/avionos.html"
+    }
+
     def "get absolute parent"() {
         setup:
         def page = getPage("/content/avionos/child1")

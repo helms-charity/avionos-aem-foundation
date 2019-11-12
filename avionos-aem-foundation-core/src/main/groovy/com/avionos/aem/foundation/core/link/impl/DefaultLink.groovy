@@ -28,6 +28,10 @@ class DefaultLink implements Link {
 
     Map<String, String> properties
 
+    boolean active
+
+    List<Link> children
+
     @Override
     boolean isEmpty() {
         !href

@@ -1,11 +1,11 @@
 package com.avionos.aem.foundation.core.link.builders.impl
 
-import com.day.cq.wcm.api.NameConstants
-import com.day.cq.wcm.api.Page
 import com.avionos.aem.foundation.api.page.FoundationPageManager
 import com.avionos.aem.foundation.api.page.enums.TitleType
 import com.avionos.aem.foundation.core.link.builders.factory.LinkBuilderFactory
 import com.avionos.aem.foundation.core.specs.FoundationSpec
+import com.day.cq.wcm.api.NameConstants
+import com.day.cq.wcm.api.Page
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
@@ -300,28 +300,17 @@ class DefaultLinkBuilderSpec extends FoundationSpec {
         link.queryString == "?a=1&a=2&a=3"
     }
 
-    def "build image link"() {
+    def "build link without children"() {
         setup:
-        def imageLink = LinkBuilderFactory.forPath("/content/global").setImageSource(imageSource).buildImageLink()
-
-        expect:
-        imageLink.imageSource == imageSource
-
-        where:
-        imageSource << ["abc.png", ""]
-    }
-
-    def "build navigation link without children"() {
-        setup:
-        def navigationLink = LinkBuilderFactory.forPath("/content/global").buildNavigationLink()
+        def navigationLink = LinkBuilderFactory.forPath("/content/global").build()
 
         expect:
         !navigationLink.children
     }
 
-    def "build navigation link without children with active state"() {
+    def "build link without children with active state"() {
         setup:
-        def navigationLink = LinkBuilderFactory.forPath("/content/global").setActive(active).buildNavigationLink()
+        def navigationLink = LinkBuilderFactory.forPath("/content/global").setActive(active).build()
 
         expect:
         navigationLink.active == active
@@ -330,15 +319,15 @@ class DefaultLinkBuilderSpec extends FoundationSpec {
         active << [true, false]
     }
 
-    def "build navigation link with children"() {
+    def "build link with children"() {
         setup:
         def builder = LinkBuilderFactory.forPath("/content/global")
 
-        builder.addChild(LinkBuilderFactory.forPath("/content/1").buildNavigationLink())
-        builder.addChild(LinkBuilderFactory.forPath("/content/2").buildNavigationLink())
-        builder.addChild(LinkBuilderFactory.forPath("/content/3").buildNavigationLink())
+        builder.addChild(LinkBuilderFactory.forPath("/content/1").build())
+        builder.addChild(LinkBuilderFactory.forPath("/content/2").build())
+        builder.addChild(LinkBuilderFactory.forPath("/content/3").build())
 
-        def navigationLink = builder.buildNavigationLink()
+        def navigationLink = builder.build()
 
         expect:
         navigationLink.children.size() == 3

@@ -7,7 +7,7 @@ import java.util.function.Function
 
 final class ComponentResourceFunctions {
 
-    public static final Function<Resource, ComponentResource> RESOURCE_TO_COMPONENT_NODE = new Function<Resource,
+    public static final Function<Resource, ComponentResource> RESOURCE_TO_COMPONENT_RESOURCE = new Function<Resource,
         ComponentResource>() {
         @Override
         ComponentResource apply(Resource resource) {

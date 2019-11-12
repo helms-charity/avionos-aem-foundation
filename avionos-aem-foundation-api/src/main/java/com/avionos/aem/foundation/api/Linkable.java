@@ -55,5 +55,4 @@ public interface Linkable {
      * @return builder instance for this item containing the mapped link
      */
     LinkBuilder getLinkBuilder(boolean mapped);
-
 }

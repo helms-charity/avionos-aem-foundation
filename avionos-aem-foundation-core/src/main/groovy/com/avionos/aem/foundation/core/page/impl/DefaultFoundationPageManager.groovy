@@ -211,6 +211,6 @@ class DefaultFoundationPageManager implements FoundationPageManager {
     }
 
     private FoundationPage getFoundationPage(Page page) {
-        page ? new DefaultFoundationPage(page) : null
+        page ? page.adaptTo(FoundationPage.class) : null
     }
 }

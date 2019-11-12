@@ -135,6 +135,15 @@ public interface Accessible {
     Optional<FoundationPage> getAsPage(String propertyName);
 
     /**
+     * Get a list of pages from the value of the given property.  Pages will only be returned in the list if the paths
+     * resolve to a non-null page.
+     *
+     * @param propertyName property name
+     * @return list of pages for property value
+     */
+    List<FoundationPage> getAsPageList(String propertyName);
+
+    /**
      * Get an <code>Optional</code> type instance for a property on this resource containing the path of another
      * <code>Resource</code>.
      *

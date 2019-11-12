@@ -1,19 +1,16 @@
 package com.avionos.aem.foundation.core.link.builders.impl
 
+
+import com.avionos.aem.foundation.api.link.Link
+import com.avionos.aem.foundation.api.link.builders.LinkBuilder
+import com.avionos.aem.foundation.api.link.enums.LinkTarget
+import com.avionos.aem.foundation.core.constants.PathConstants
+import com.avionos.aem.foundation.core.link.impl.DefaultLink
+import com.avionos.aem.foundation.core.utils.PathUtils
 import com.google.common.base.Charsets
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.Multimaps
 import com.google.common.collect.SetMultimap
-import com.avionos.aem.foundation.api.link.ImageLink
-import com.avionos.aem.foundation.api.link.Link
-import com.avionos.aem.foundation.api.link.NavigationLink
-import com.avionos.aem.foundation.api.link.builders.LinkBuilder
-import com.avionos.aem.foundation.api.link.enums.LinkTarget
-import com.avionos.aem.foundation.core.constants.PathConstants
-import com.avionos.aem.foundation.core.link.impl.DefaultImageLink
-import com.avionos.aem.foundation.core.link.impl.DefaultLink
-import com.avionos.aem.foundation.core.link.impl.DefaultNavigationLink
-import com.avionos.aem.foundation.core.utils.PathUtils
 import groovy.util.logging.Slf4j
 import org.apache.sling.api.resource.ResourceResolver
 
@@ -34,7 +31,7 @@ final class DefaultLinkBuilder implements LinkBuilder {
 
     private List<String> selectors = []
 
-    private List<NavigationLink> children = []
+    private List<Link> children = []
 
     // initialized with default values
 
@@ -70,7 +67,7 @@ final class DefaultLinkBuilder implements LinkBuilder {
     }
 
     @Override
-    LinkBuilder addChild(NavigationLink child) {
+    LinkBuilder addChild(Link child) {
         children.add(checkNotNull(child))
 
         this
@@ -165,21 +162,8 @@ final class DefaultLinkBuilder implements LinkBuilder {
 
         LOG.debug("building href = {}", href)
 
-        new DefaultLink(path, extension, suffix, href, selectors, queryString, isExternal, target, title, properties)
-    }
-
-    @Override
-    ImageLink buildImageLink() {
-        def link = build()
-
-        new DefaultImageLink(link, imageSource)
-    }
-
-    @Override
-    NavigationLink buildNavigationLink() {
-        def link = build()
-
-        new DefaultNavigationLink(link, isActive, children)
+        new DefaultLink(path, extension, suffix, href, selectors, queryString, isExternal, target, title, properties,
+            isActive, children)
     }
 
     @Override

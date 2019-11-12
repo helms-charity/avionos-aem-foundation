@@ -6,7 +6,7 @@ class DefaultLinkSpec extends Specification {
 
     def "empty link with null arguments"() {
         setup:
-        def link = new DefaultLink(null, null, null, null, null, null, false, null, null, null)
+        def link = new DefaultLink(null, null, null, null, null, null, false, null, null, null, false, null)
 
         expect:
         link.empty

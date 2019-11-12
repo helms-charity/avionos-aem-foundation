@@ -2,6 +2,7 @@ package com.avionos.aem.foundation.api;
 
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.day.cq.tagging.Tag;
 
 import java.util.List;
 import java.util.Optional;
@@ -111,6 +112,16 @@ public interface Inheritable {
     Optional<FoundationPage> getAsPageInherited(String propertyName);
 
     /**
+     * Get a multi-valued property from the current resource as a list of pages, using inheritance if the value does not
+     * exist on this component.
+     *
+     * @param propertyName name of property containing a list of page paths
+     * @return list of pages, or empty list if either the property does not exist or pages do not exist for the property
+     * values
+     */
+    List<FoundationPage> getAsPageListInherited(String propertyName);
+
+    /**
      * Get an <code>Optional</code> type instance for a property on this resource containing the path of another
      * <code>Resource</code> in the repository, using inheritance if the value does not exist on this component..
      *
@@ -121,6 +132,18 @@ public interface Inheritable {
      * the resource does not adapt to the provided type
      */
     <AdapterType> Optional<AdapterType> getAsTypeInherited(String propertyName, Class<AdapterType> type);
+
+    /**
+     * Get a multi-valued property from the current resource as a list of the given type, using inheritance if the value
+     * does not exist on this component.
+     *
+     * @param propertyName name of property containing a list of resource paths
+     * @param type type to adapt from resource corresponding to each path value
+     * @param <AdapterType> adapter class that is adaptable from <code>Resource</code>
+     * @return list of the specified type, or empty list if either the property does not exist or the resource does not
+     * adapt to the provided type
+     */
+    <AdapterType> List<AdapterType> getAsTypeListInherited(String propertyName, Class<AdapterType> type);
 
     /**
      * @param isSelf if true, component will attempt to find the image reference property on the current resource
@@ -140,7 +163,7 @@ public interface Inheritable {
     Optional<String> getImageReferenceInherited(String name);
 
     /**
-     * Get a property value from the current node. If no value is found, recurse up the content tree respective to the
+     * Get a property value from the current node. If no value is found, traverse up the content tree respective to the
      * page and relative node path until a value is found.
      *
      * @param <T> result type
@@ -151,8 +174,8 @@ public interface Inheritable {
     <T> T getInherited(String propertyName, T defaultValue);
 
     /**
-     * Get a property value from the current node.   If no value is found, recurse up the content tree respective to the
-     * page and relative node path until a value is found, returning an absent <code>Optional</code> if not.  This
+     * Get a property value from the current node.   If no value is found, traverse up the content tree respective to
+     * the page and relative node path until a value is found, returning an absent <code>Optional</code> if not.  This
      * returns the same value as the underlying <code>ValueMap</code> wrapped in an <code>Optional</code> instance
      * instead of returning null.
      *
@@ -162,4 +185,14 @@ public interface Inheritable {
      * @return <code>Optional</code> of the given type containing the property value or absent if no value is found
      */
     <T> Optional<T> getInherited(String propertyName, Class<T> type);
+
+
+    /**
+     * Get a list of tags for the given property name.  If no tags are found, traverse up the content tree respective to
+     * the page and relative path until a value is found, returning an empty list if not.
+     *
+     * @param propertyName name of property containing an array of tag IDs
+     * @return list of tags or empty list if not found
+     */
+    List<Tag> getTagsInherited(String propertyName);
 }

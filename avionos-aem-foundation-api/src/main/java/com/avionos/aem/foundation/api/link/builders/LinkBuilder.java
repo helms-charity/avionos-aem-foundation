@@ -1,9 +1,7 @@
 package com.avionos.aem.foundation.api.link.builders;
 
-import com.avionos.aem.foundation.api.link.NavigationLink;
-import com.google.common.collect.SetMultimap;
-import com.avionos.aem.foundation.api.link.ImageLink;
 import com.avionos.aem.foundation.api.link.Link;
+import com.google.common.collect.SetMultimap;
 
 import java.util.List;
 import java.util.Map;
@@ -21,30 +19,12 @@ public interface LinkBuilder {
     Link build();
 
     /**
-     * Build an image link using the properties of the current builder.  If <code>setImage()</code> was called on the
-     * builder, this is the only method that will return a link containing the image source property.
+     * Add a child link.
      *
-     * @return image link
-     */
-    ImageLink buildImageLink();
-
-    /**
-     * Build a navigation link using the properties of the current builder.  If <code>setActive()</code> or
-     * <code>addChild()</code> was called on the builder, this is only method that will return a link containing an
-     * active state and child links.
-     *
+     * @param child child link instance
      * @return builder
      */
-    NavigationLink buildNavigationLink();
-
-    /**
-     * Add a child link.  This is only applicable when building navigation links, returned by calling
-     * <code>buildNavigationLink()</code>.
-     *
-     * @param child child navigation link instance
-     * @return builder
-     */
-    LinkBuilder addChild(NavigationLink child);
+    LinkBuilder addChild(Link child);
 
     /**
      * Add a query parameter.
@@ -105,8 +85,7 @@ public interface LinkBuilder {
     LinkBuilder addSelectors(List<String> selectors);
 
     /**
-     * Set the active state for the link.  This only applies to navigation links returned by calling
-     * <code>buildNavigationLink()</code>.
+     * Set the active state for the link.
      *
      * @param isActive active state
      * @return builder

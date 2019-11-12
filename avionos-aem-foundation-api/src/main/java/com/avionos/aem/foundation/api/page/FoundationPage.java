@@ -5,12 +5,10 @@ import com.avionos.aem.foundation.api.ImageSource;
 import com.avionos.aem.foundation.api.Inheritable;
 import com.avionos.aem.foundation.api.Linkable;
 import com.avionos.aem.foundation.api.Traversable;
-import com.avionos.aem.foundation.api.link.ImageLink;
 import com.avionos.aem.foundation.api.link.Link;
-import com.avionos.aem.foundation.api.link.NavigationLink;
 import com.avionos.aem.foundation.api.link.builders.LinkBuilder;
-import com.avionos.aem.foundation.api.resource.ComponentResource;
 import com.avionos.aem.foundation.api.page.enums.TitleType;
+import com.avionos.aem.foundation.api.resource.ComponentResource;
 import com.day.cq.wcm.api.Page;
 
 import java.util.Iterator;
@@ -19,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * Decorates the CQ <code>Page</code> interface with additional convenience methods for traversing the content hierarchy
+ * Decorates the <code>Page</code> interface with additional convenience methods for traversing the content hierarchy
  * and getters for Avionos AEM Foundation classes.
  */
 public interface FoundationPage extends Page, Accessible, Inheritable, Linkable, ImageSource, Traversable<FoundationPage> {
@@ -97,14 +95,6 @@ public interface FoundationPage extends Page, Accessible, Inheritable, Linkable,
     Optional<ComponentResource> getComponentResource(String relativePath);
 
     /**
-     * Get a link for this page with an attached image source.
-     *
-     * @param imageSource image source to set on the returned image link
-     * @return image link with the provided image source
-     */
-    ImageLink getImageLink(String imageSource);
-
-    /**
      * Get a link with a specified title type for this item.
      *
      * @param titleType type of title to set on link
@@ -141,21 +131,13 @@ public interface FoundationPage extends Page, Accessible, Inheritable, Linkable,
     LinkBuilder getLinkBuilder(TitleType titleType, boolean mapped);
 
     /**
-     * Get a navigation link for this page. The returned link will use the navigation title as the link title,
-     * defaulting to the JCR title if it does not exist.
-     *
-     * @return navigation link
-     */
-    NavigationLink getNavigationLink();
-
-    /**
      * Get a navigation link for this page containing an active state. The returned link will use the navigation title
      * as the link title, defaulting to the JCR title if it does not exist.
      *
      * @param isActive active state to be set on returned link
      * @return navigation link
      */
-    NavigationLink getNavigationLink(boolean isActive);
+    Link getNavigationLink(boolean isActive);
 
     /**
      * Get a navigation link for this page containing an active state. The returned link will use the navigation title
@@ -166,7 +148,7 @@ public interface FoundationPage extends Page, Accessible, Inheritable, Linkable,
      * determine the mapped path (e.g. without leading "/content").
      * @return navigation link
      */
-    NavigationLink getNavigationLink(boolean isActive, boolean mapped);
+    Link getNavigationLink(boolean isActive, boolean mapped);
 
     /**
      * Get the template path for this page. This method is preferred over getTemplate().getPath(), which is dependent on

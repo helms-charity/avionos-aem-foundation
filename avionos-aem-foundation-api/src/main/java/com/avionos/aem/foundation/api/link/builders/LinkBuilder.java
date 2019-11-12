@@ -137,14 +137,6 @@ public interface LinkBuilder {
     LinkBuilder setOpaque(boolean isOpaque);
 
     /**
-     * Set an image source.  This only applies to image links returned by calling <code>buildImageLink()</code>.
-     *
-     * @param imageSource image source path
-     * @return builder
-     */
-    LinkBuilder setImageSource(String imageSource);
-
-    /**
      * Set the port.
      *
      * @param port port number

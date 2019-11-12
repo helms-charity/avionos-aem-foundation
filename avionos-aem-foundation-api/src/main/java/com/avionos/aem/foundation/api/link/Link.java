@@ -62,11 +62,6 @@ public interface Link extends Serializable {
     String getTitle();
 
     /**
-     * @return true if href is null or empty
-     */
-    boolean isEmpty();
-
-    /**
      * @return if href is to an external URL
      */
     boolean isExternal();

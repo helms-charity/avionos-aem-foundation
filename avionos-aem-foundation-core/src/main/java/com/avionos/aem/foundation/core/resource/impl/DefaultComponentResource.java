@@ -44,7 +44,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.avionos.aem.foundation.core.link.impl.LinkFunctions.LINK_TO_HREF;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Model(adaptables = Resource.class, adapters = ComponentResource.class)
@@ -123,7 +122,7 @@ public final class DefaultComponentResource implements ComponentResource {
 
     @Override
     public Optional<String> getAsHref(final String propertyName, final boolean strict, final boolean mapped) {
-        return getAsLink(propertyName, strict, mapped).map(LINK_TO_HREF);
+        return getAsLink(propertyName, strict, mapped).map(Link :: getHref);
     }
 
     @Override
@@ -370,7 +369,7 @@ public final class DefaultComponentResource implements ComponentResource {
 
     @Override
     public Optional<String> getAsHrefInherited(final String propertyName, final boolean strict, final boolean mapped) {
-        return getAsLinkInherited(propertyName, strict, mapped).map(LINK_TO_HREF);
+        return getAsLinkInherited(propertyName, strict, mapped).map(Link :: getHref);
     }
 
     @Override

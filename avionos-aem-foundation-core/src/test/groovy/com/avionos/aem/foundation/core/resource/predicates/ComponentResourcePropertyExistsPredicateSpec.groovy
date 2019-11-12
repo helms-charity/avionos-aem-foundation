@@ -1,5 +1,6 @@
 package com.avionos.aem.foundation.core.resource.predicates
 
+import com.avionos.aem.foundation.api.resource.ComponentResource
 import com.avionos.aem.foundation.core.resource.impl.DefaultComponentResource
 import com.avionos.aem.foundation.core.specs.FoundationSpec
 import org.apache.sling.api.resource.NonExistingResource
@@ -33,7 +34,7 @@ class ComponentResourcePropertyExistsPredicateSpec extends FoundationSpec {
     def "resource for non-existing resource is not included"() {
         setup:
         def resource = new NonExistingResource(resourceResolver, "/content/non-existing")
-        def componentResource = new DefaultComponentResource(resource)
+        def componentResource = resource.adaptTo(ComponentResource)
         def predicate = new ComponentResourcePropertyExistsPredicate("propertyName")
 
         expect:

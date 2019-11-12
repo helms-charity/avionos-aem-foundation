@@ -80,7 +80,7 @@ class DefaultLinkBuilderSpec extends FoundationSpec {
         link.path == "/content/se"
         link.href == "/content/se.html"
         link.extension == "html"
-        link.title == ""
+        link.title == null
     }
 
     def "build link for page with redirect"() {

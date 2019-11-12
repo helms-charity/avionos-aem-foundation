@@ -161,6 +161,11 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
+    public List<FoundationPage> getAsPageList(final String propertyName) {
+        return componentResource.getAsPageList(propertyName);
+    }
+
+    @Override
     public final <AdapterType> Optional<AdapterType> getAsType(final String propertyName,
         final Class<AdapterType> type) {
         return componentResource.getAsType(propertyName, type);
@@ -182,9 +187,20 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
+    public List<FoundationPage> getAsPageListInherited(final String propertyName) {
+        return componentResource.getAsPageListInherited(propertyName);
+    }
+
+    @Override
     public final <AdapterType> Optional<AdapterType> getAsTypeInherited(final String propertyName,
         final Class<AdapterType> type) {
         return componentResource.getAsTypeInherited(propertyName, type);
+    }
+
+    @Override
+    public <AdapterType> List<AdapterType> getAsTypeListInherited(final String propertyName,
+        final Class<AdapterType> type) {
+        return componentResource.getAsTypeListInherited(propertyName, type);
     }
 
     @Override
@@ -291,6 +307,11 @@ public abstract class DelegateComponentResource implements ComponentResource {
     @Override
     public final <T> Optional<T> getInherited(final String propertyName, final Class<T> type) {
         return componentResource.getInherited(propertyName, type);
+    }
+
+    @Override
+    public List<Tag> getTagsInherited(final String propertyName) {
+        return componentResource.getTagsInherited(propertyName);
     }
 
     @Override

@@ -306,7 +306,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
         where:
         path                      | templatePath
-        "/content/avionos"        | ""
+        "/content/avionos"        | null
         "/content/avionos/child1" | "template"
     }
 
@@ -471,25 +471,5 @@ class DefaultFoundationPageSpec extends FoundationSpec {
             TitleType.NAVIGATION_TITLE,
             TitleType.PAGE_TITLE
         ]
-    }
-
-    def "get image link"() {
-        setup:
-        def page = getPage("/content/avionos")
-        def imageLink = page.getImageLink("/image")
-
-        expect:
-        imageLink.href == "/content/avionos.html"
-        imageLink.imageSource == "/image"
-    }
-
-    def "get navigation link"() {
-        setup:
-        def page = getPage("/content/avionos")
-        def navigationLink = page.navigationLink
-
-        expect:
-        navigationLink.href == "/content/avionos.html"
-        navigationLink.title == "Navigation Title"
     }
 }

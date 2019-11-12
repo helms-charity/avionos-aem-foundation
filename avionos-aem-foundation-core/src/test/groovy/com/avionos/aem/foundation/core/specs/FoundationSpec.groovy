@@ -4,6 +4,8 @@ import com.avionos.aem.foundation.api.page.FoundationPage
 import com.avionos.aem.foundation.api.page.FoundationPageManager
 import com.avionos.aem.foundation.api.resource.ComponentResource
 import com.avionos.aem.foundation.core.adapter.FoundationAdapterFactory
+import com.avionos.aem.foundation.core.page.impl.DefaultFoundationPage
+import com.avionos.aem.foundation.core.resource.impl.DefaultComponentResource
 import com.icfolson.aem.prosper.specs.ProsperSpec
 
 /**
@@ -13,6 +15,7 @@ abstract class FoundationSpec extends ProsperSpec {
 
     def setupSpec() {
         slingContext.registerAdapterFactory(new FoundationAdapterFactory())
+        slingContext.addModelsForClasses(DefaultComponentResource, DefaultFoundationPage)
     }
 
     ComponentResource getComponentResource(String path) {

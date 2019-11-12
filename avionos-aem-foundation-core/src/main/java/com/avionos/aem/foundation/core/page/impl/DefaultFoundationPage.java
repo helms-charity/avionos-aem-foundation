@@ -354,8 +354,7 @@ public final class DefaultFoundationPage implements FoundationPage {
 
     @Override
     public <AdapterType> Optional<AdapterType> getAsType(final String propertyName, final Class<AdapterType> type) {
-        return getComponentResource().flatMap(componentResource -> componentResource.getAsType(propertyName,
-            type));
+        return getComponentResource().flatMap(componentResource -> componentResource.getAsType(propertyName, type));
     }
 
     @Override

@@ -223,6 +223,11 @@ public abstract class AbstractComponent implements ComponentResource {
     }
 
     @Override
+    public List<FoundationPage> getAsPageListInherited(final String propertyName) {
+        return componentResource.getAsPageListInherited(propertyName);
+    }
+
+    @Override
     public <T> List<T> getAsList(final String propertyName, final Class<T> type) {
         return componentResource.getAsList(propertyName, type);
     }
@@ -234,6 +239,12 @@ public abstract class AbstractComponent implements ComponentResource {
     }
 
     @Override
+    public <AdapterType> List<AdapterType> getAsTypeListInherited(final String propertyName,
+        final Class<AdapterType> type) {
+        return componentResource.getAsTypeListInherited(propertyName, type);
+    }
+
+    @Override
     public Optional<String> getImageReferenceInherited(final boolean isSelf) {
         return componentResource.getImageReferenceInherited(isSelf);
     }
@@ -241,6 +252,11 @@ public abstract class AbstractComponent implements ComponentResource {
     @Override
     public Optional<FoundationPage> getAsPage(final String propertyName) {
         return componentResource.getAsPage(propertyName);
+    }
+
+    @Override
+    public List<FoundationPage> getAsPageList(final String propertyName) {
+        return componentResource.getAsPageListInherited(propertyName);
     }
 
     @Override
@@ -301,6 +317,11 @@ public abstract class AbstractComponent implements ComponentResource {
     @Override
     public <T> Optional<T> getInherited(final String propertyName, final Class<T> type) {
         return componentResource.getInherited(propertyName, type);
+    }
+
+    @Override
+    public List<Tag> getTagsInherited(final String propertyName) {
+        return componentResource.getTagsInherited(propertyName);
     }
 
     @Override

@@ -10,9 +10,6 @@ import org.apache.sling.api.resource.ValueMap
 import spock.lang.Shared
 import spock.lang.Unroll
 
-import javax.jcr.Node
-import javax.jcr.Session
-
 @Unroll
 class ComponentInjectorSpec extends FoundationSpec {
 
@@ -43,8 +40,7 @@ class ComponentInjectorSpec extends FoundationSpec {
         value
 
         where:
-        type << [Resource, ResourceResolver, ValueMap, Node, Session, ComponentResource, FoundationPage,
-                 FoundationPageManager]
+        type << [Resource, ResourceResolver, ValueMap, ComponentResource, FoundationPage, FoundationPageManager]
     }
 
     def "get value from resource for invalid type returns null value"() {

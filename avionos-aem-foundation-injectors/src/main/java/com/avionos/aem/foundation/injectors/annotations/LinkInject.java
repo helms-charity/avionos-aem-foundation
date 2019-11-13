@@ -1,5 +1,6 @@
 package com.avionos.aem.foundation.injectors.annotations;
 
+import com.day.cq.commons.jcr.JcrConstants;
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.annotations.injectorspecific.InjectionStrategy;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
@@ -31,11 +32,11 @@ public @interface LinkInject {
     InjectionStrategy injectionStrategy() default InjectionStrategy.DEFAULT;
 
     /**
-     * The property to use for setting the title on the link
+     * The property to use for setting the title on the link, defaults to jcr:title.
      *
      * @return name of title property
      */
-    String titleProperty() default "";
+    String titleProperty() default JcrConstants.JCR_TITLE;
 
     /**
      * Whether to get the link via inheriting

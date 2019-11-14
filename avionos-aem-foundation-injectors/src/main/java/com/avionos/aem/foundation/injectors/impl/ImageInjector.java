@@ -15,7 +15,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.Optional;
 
 @Component(service = Injector.class)
 @ServiceRanking(4000)
@@ -35,15 +34,12 @@ public final class ImageInjector extends AbstractTypedComponentResourceInjector<
 
         final boolean self = annotation != null && annotation.isSelf();
 
-        Resource resource = null;
+        final Resource resource;
 
         if (annotation != null && annotation.inherit()) {
-            final Optional<ComponentResource> componentResourceInherit = componentResource.findAncestor(
-                cn -> self ? cn.isHasImage() : cn.isHasImage(name));
-
-            if (componentResourceInherit.isPresent()) {
-                resource = componentResourceInherit.get().getResource();
-            }
+            resource = componentResource.findAncestor(cn -> self ? cn.isHasImage() : cn.isHasImage(name))
+                .map(ComponentResource :: getResource)
+                .orElse(null);
         } else {
             resource = componentResource.getResource();
         }
@@ -51,7 +47,7 @@ public final class ImageInjector extends AbstractTypedComponentResourceInjector<
         Object value = null;
 
         if (resource != null) {
-            Image image;
+            final Image image;
 
             if (self) {
                 image = new Image(resource);
@@ -86,7 +82,7 @@ public final class ImageInjector extends AbstractTypedComponentResourceInjector<
 
     static class ImageAnnotationProcessor extends AbstractInjectAnnotationProcessor2 {
 
-        private ImageInject annotation;
+        private final ImageInject annotation;
 
         ImageAnnotationProcessor(final ImageInject annotation) {
             this.annotation = annotation;

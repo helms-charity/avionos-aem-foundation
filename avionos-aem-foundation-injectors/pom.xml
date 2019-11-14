@@ -23,8 +23,6 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>!*.impl,com.avionos.aem.foundation.injectors.*</Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                        <Require-Bundle>org.apache.sling.models.api</Require-Bundle>
                     </instructions>
                 </configuration>
             </plugin>

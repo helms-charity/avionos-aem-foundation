@@ -25,8 +25,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>!*.impl,com.avionos.aem.foundation.core.*</Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                        <Require-Bundle>org.apache.sling.models.api</Require-Bundle>
+                        <Sling-Model-Packages>com.avionos.aem.foundation.core</Sling-Model-Packages>
                     </instructions>
                 </configuration>
             </plugin>
@@ -38,11 +37,8 @@
                     <outputDirectory>${project.parent.reporting.outputDirectory}/cobertura</outputDirectory>
                     <instrumentation>
                         <excludes>
-                            <exclude>com/avionos/aem/foundation/core/bindings/*</exclude>
                             <exclude>com/avionos/aem/foundation/core/components/*</exclude>
                             <exclude>com/avionos/aem/foundation/core/constants/*</exclude>
-                            <!--<exclude>com/avionos/aem/foundation/core/resource/*</exclude>-->
-                            <exclude>com/avionos/aem/foundation/core/servlets/AbstractComponentServlet.class</exclude>
                         </excludes>
                         <ignoreTrivial>true</ignoreTrivial>
                     </instrumentation>
@@ -77,8 +73,7 @@
                             <excludePackageNames>
                                 *.impl,
                                 *.predicates,
-                                com.avionos.aem.foundation.core.adapter.*,
-                                com.avionos.aem.foundation.core.bindings.*
+                                com.avionos.aem.foundation.core.adapter.*
                             </excludePackageNames>
                             <links>
                                 <link>http://docs.oracle.com/javase/8/docs/api/</link>

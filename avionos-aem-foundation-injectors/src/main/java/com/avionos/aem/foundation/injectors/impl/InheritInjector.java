@@ -70,7 +70,7 @@ public final class InheritInjector extends AbstractComponentResourceInjector
 
     static class InheritAnnotationProcessor extends AbstractInjectAnnotationProcessor2 {
 
-        private InheritInject annotation;
+        private final InheritInject annotation;
 
         InheritAnnotationProcessor(final InheritInject annotation) {
             this.annotation = annotation;

@@ -74,7 +74,7 @@ public final class TagInjector extends AbstractComponentResourceInjector impleme
 
     static class TagAnnotationProcessor extends AbstractInjectAnnotationProcessor2 {
 
-        private TagInject annotation;
+        private final TagInject annotation;
 
         TagAnnotationProcessor(final TagInject annotation) {
             this.annotation = annotation;

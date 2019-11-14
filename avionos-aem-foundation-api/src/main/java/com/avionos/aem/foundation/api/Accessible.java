@@ -204,6 +204,21 @@ public interface Accessible {
     Optional<String> getImageRendition(String name, String renditionName);
 
     /**
+     * Check if the current resource has a default image.
+     *
+     * @return true if image has content
+     */
+    boolean isHasImage();
+
+    /**
+     * Check if the current resource has a named image.
+     *
+     * @param name image name (name of image as defined in dialog)
+     * @return true if image has content
+     */
+    boolean isHasImage(String name);
+
+    /**
      * Get a list of tags for the given property name.
      *
      * @param propertyName name of property containing an array of tag IDs

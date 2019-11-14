@@ -1,7 +1,6 @@
 package com.avionos.aem.foundation.api.page;
 
 import com.avionos.aem.foundation.api.Accessible;
-import com.avionos.aem.foundation.api.ImageSource;
 import com.avionos.aem.foundation.api.Inheritable;
 import com.avionos.aem.foundation.api.Linkable;
 import com.avionos.aem.foundation.api.Traversable;
@@ -20,7 +19,7 @@ import java.util.function.Predicate;
  * Decorates the <code>Page</code> interface with additional convenience methods for traversing the content hierarchy
  * and getters for Avionos AEM Foundation classes.
  */
-public interface FoundationPage extends Page, Accessible, Inheritable, Linkable, ImageSource, Traversable<FoundationPage> {
+public interface FoundationPage extends Page, Accessible, Inheritable, Linkable, Traversable<FoundationPage> {
 
     /**
      * Get the child pages of the current page.

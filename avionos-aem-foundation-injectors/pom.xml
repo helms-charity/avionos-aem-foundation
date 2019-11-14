@@ -22,7 +22,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
-                        <Export-Package>!*.impl,com.avionos.aem.foundation.injectors.*</Export-Package>
+                        <Export-Package>com.avionos.aem.foundation.injectors.annotations</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

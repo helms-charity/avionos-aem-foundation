@@ -1,7 +1,6 @@
 package com.avionos.aem.foundation.api.resource;
 
 import com.avionos.aem.foundation.api.Accessible;
-import com.avionos.aem.foundation.api.ImageSource;
 import com.avionos.aem.foundation.api.Inheritable;
 import com.avionos.aem.foundation.api.Linkable;
 import com.avionos.aem.foundation.api.Traversable;
@@ -14,7 +13,7 @@ import java.util.function.Predicate;
 /**
  * Represents a "component" resource in the JCR, typically an unstructured resource in the hierarchy of an AEM page.
  */
-public interface ComponentResource extends Linkable, ImageSource, Accessible, Inheritable, Traversable<ComponentResource> {
+public interface ComponentResource extends Linkable, Accessible, Inheritable, Traversable<ComponentResource> {
 
     /**
      * Get the unique ID for this resource based on the path.  If this resource is the descendant of a page, the page

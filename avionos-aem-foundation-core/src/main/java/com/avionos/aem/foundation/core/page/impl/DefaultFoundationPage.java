@@ -1,7 +1,6 @@
 package com.avionos.aem.foundation.core.page.impl;
 
 import com.avionos.aem.foundation.api.Accessible;
-import com.avionos.aem.foundation.api.ImageSource;
 import com.avionos.aem.foundation.api.Inheritable;
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.link.builders.LinkBuilder;
@@ -414,7 +413,7 @@ public final class DefaultFoundationPage implements FoundationPage {
 
     @Override
     public boolean isHasImage() {
-        return getComponentResource().map(ImageSource :: isHasImage).orElse(false);
+        return getComponentResource().map(Accessible :: isHasImage).orElse(false);
     }
 
     @Override

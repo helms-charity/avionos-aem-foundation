@@ -4,7 +4,13 @@
 
 ## Overview
 
-The Avionos AEM Foundation contains utilities, decorators, abstract classes, and Sling Model injectors for bootstrapping and simplifying AEM projects.
+The Avionos AEM Foundation is a set of bundles designed to streamline and simplify development of Adobe Experience Manager projects.
+
+Bundle | Description
+------------ | -------------
+API | The Foundation API includes extensions for the Sling `Resource` and AEM `Page`/`PageManager` interfaces, as well as a `Link` interface encapsulating the typical attributes of a link object.
+Core | The Core bundle implements the Foundation API in addition to providing a set of abstract servlets for returning JSON responses and supplying Touch UI data sources.
+Injectors | Sling Model Injectors for a variety of common use cases - e.g. component context objects, enums, tags, images, references. 
 
 See the [project site](http://avionosllc.github.io/avionos-aem-foundation) for the User Guide and project details.
 

@@ -73,7 +73,9 @@ public final class DefaultFoundationPage implements FoundationPage {
     public <AdapterType> AdapterType adaptTo(final Class<AdapterType> type) {
         final AdapterType result;
 
-        if (type == ComponentResource.class) {
+        if (type == Page.class) {
+            result = (AdapterType) page;
+        } else if (type == ComponentResource.class) {
             result = (AdapterType) getComponentResource().orElse(null);
         } else {
             result = page.adaptTo(type);

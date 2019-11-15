@@ -531,8 +531,11 @@ public final class DefaultComponentResource implements ComponentResource {
         return Optional.ofNullable(path).map(resourcePath -> resource.getResourceResolver().getResource(resourcePath));
     }
 
+    @SuppressWarnings("unchecked")
     private <AdapterType> Optional<AdapterType> getAsTypeOptional(final String path, final Class<AdapterType> type) {
-        return getAsResourceOptional(path).map(resource -> resource.adaptTo(type));
+        final Optional<Resource> resource = getAsResourceOptional(path);
+
+        return type == Resource.class ? (Optional<AdapterType>) resource : resource.map(r -> r.adaptTo(type));
     }
 
     private Optional<Link> getLinkOptional(final Optional<String> pathOptional, final boolean strict,

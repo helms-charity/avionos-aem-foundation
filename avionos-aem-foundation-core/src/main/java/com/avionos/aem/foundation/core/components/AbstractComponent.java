@@ -354,8 +354,7 @@ public abstract class AbstractComponent implements ComponentResource {
 
     @Override
     public <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName,
-        final V propertyValue,
-        final boolean excludeCurrentResource) {
+        final V propertyValue, final boolean excludeCurrentResource) {
         return componentResource.findAncestorWithPropertyValue(propertyName, propertyValue, excludeCurrentResource);
     }
 

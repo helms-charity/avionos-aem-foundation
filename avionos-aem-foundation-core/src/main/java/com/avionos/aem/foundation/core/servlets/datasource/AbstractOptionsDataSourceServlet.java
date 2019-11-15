@@ -3,7 +3,6 @@ package com.avionos.aem.foundation.core.servlets.datasource;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-import com.avionos.aem.foundation.core.servlets.AbstractJsonResponseServlet;
 import com.avionos.aem.foundation.core.servlets.optionsprovider.Option;
 import com.google.common.collect.Maps;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -12,6 +11,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
 import java.util.List;
@@ -28,7 +28,7 @@ import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;
  * source.  The implementing class determines how these options are retrieved from the repository (or external provider,
  * such as a web service).
  */
-public abstract class AbstractOptionsDataSourceServlet extends AbstractJsonResponseServlet {
+public abstract class AbstractOptionsDataSourceServlet extends SlingSafeMethodsServlet {
 
     private static final long serialVersionUID = 1L;
 

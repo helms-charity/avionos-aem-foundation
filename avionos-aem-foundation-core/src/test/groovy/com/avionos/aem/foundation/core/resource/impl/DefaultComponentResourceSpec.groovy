@@ -4,6 +4,7 @@ import com.avionos.aem.foundation.api.resource.ComponentResource
 import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyExistsPredicate
 import com.avionos.aem.foundation.core.specs.FoundationSpec
 import com.day.cq.dam.api.Asset
+import org.apache.sling.api.resource.Resource
 import spock.lang.Unroll
 
 import java.util.function.Predicate
@@ -337,6 +338,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         where:
         type              | result
+        Resource          | true
         ComponentResource | true
         Asset             | false
     }

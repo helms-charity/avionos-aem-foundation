@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Decorates the CQ <code>PageManager</code> interface with additional methods for finding pages using queries, tags,
+ * Decorates the <code>PageManager</code> interface with additional methods for finding pages using queries, tags,
  * and template paths.
  */
 public interface FoundationPageManager extends PageManager {

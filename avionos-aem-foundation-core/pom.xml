@@ -63,30 +63,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludePackageNames>
-                                *.impl,
-                                *.predicates,
-                                com.avionos.aem.foundation.core.adapter.*
-                            </excludePackageNames>
-                            <links>
-                                <link>http://docs.oracle.com/javase/8/docs/api/</link>
-                                <link>http://docs.oracle.com/javaee/7/api/</link>
-                                <link>http://google.github.io/guava/releases/15.0/api/</link>
-                                <link>https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0</link>
-                                <link>http://sling.apache.org/apidocs/sling10</link>
-                                <link>https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/javadoc</link>
-                                <link>http://fasterxml.github.io/jackson-databind/javadoc/2.3.0</link>
-                            </links>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -100,25 +76,9 @@
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
@@ -227,7 +187,7 @@
             <artifactId>groovy-all</artifactId>
         </dependency>
 
-        <!-- avionos-aem-foundation -->
+        <!-- avionos foundation -->
         <dependency>
             <groupId>com.avionos.aem.foundation</groupId>
             <artifactId>avionos-aem-foundation-api</artifactId>
@@ -239,14 +199,6 @@
         <dependency>
             <groupId>com.icfolson.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.objenesis</groupId>
-            <artifactId>objenesis</artifactId>
         </dependency>
 
         <!-- uber jar last to allow overrides for newer dependency versions -->

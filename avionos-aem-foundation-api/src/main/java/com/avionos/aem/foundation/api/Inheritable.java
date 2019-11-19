@@ -3,6 +3,7 @@ package com.avionos.aem.foundation.api;
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.page.FoundationPage;
 import com.day.cq.tagging.Tag;
+import org.apache.sling.api.resource.Resource;
 
 import java.util.List;
 import java.util.Optional;
@@ -122,8 +123,28 @@ public interface Inheritable {
     List<FoundationPage> getAsPageListInherited(String propertyName);
 
     /**
+     * Get an <code>Optional</code> resource instance for a property on this resource containing the path of another
+     * <code>Resource</code>, using inheritance if the value does not exist on this component.
+     *
+     * @param propertyName name of property containing a resource path
+     * @return <code>Optional</code> instance of the resource, or absent if either the property does not exist or
+     * does not resolve to a resource
+     */
+    Optional<Resource> getAsResourceInherited(String propertyName);
+
+    /**
+     * Get a multi-valued property from the current resource as a list of resources, using inheritance if the value does
+     * not exist on this component.
+     *
+     * @param propertyName name of property containing a list of resource paths
+     * @return list of resources, or empty list if either the property does not exist or does resolve to a list of
+     * resources
+     */
+    List<Resource> getAsResourceListInherited(String propertyName);
+
+    /**
      * Get an <code>Optional</code> type instance for a property on this resource containing the path of another
-     * <code>Resource</code> in the repository, using inheritance if the value does not exist on this component..
+     * <code>Resource</code> in the repository, using inheritance if the value does not exist on this component.
      *
      * @param propertyName name of property containing a resource path
      * @param type type to adapt from resource

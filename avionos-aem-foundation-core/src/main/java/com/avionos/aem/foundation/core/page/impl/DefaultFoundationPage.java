@@ -239,6 +239,19 @@ public final class DefaultFoundationPage implements FoundationPage {
     }
 
     @Override
+    public Optional<Resource> getAsResourceInherited(final String propertyName) {
+        return getComponentResource()
+            .flatMap(componentResource -> componentResource.getAsResourceInherited(propertyName));
+    }
+
+    @Override
+    public List<Resource> getAsResourceListInherited(final String propertyName) {
+        return getComponentResource()
+            .map(componentResource -> componentResource.getAsResourceListInherited(propertyName))
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
     public <AdapterType> Optional<AdapterType> getAsTypeInherited(final String propertyName,
         final Class<AdapterType> type) {
         return getComponentResource().flatMap(componentResource -> componentResource.getAsTypeInherited(propertyName,
@@ -350,6 +363,18 @@ public final class DefaultFoundationPage implements FoundationPage {
     public List<FoundationPage> getAsPageList(final String propertyName) {
         return getComponentResource()
             .map(componentResource -> componentResource.getAsPageList(propertyName))
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public Optional<Resource> getAsResource(final String propertyName) {
+        return getComponentResource().flatMap(componentResource -> componentResource.getAsResource(propertyName));
+    }
+
+    @Override
+    public List<Resource> getAsResourceList(final String propertyName) {
+        return getComponentResource()
+            .map(componentResource -> componentResource.getAsResourceList(propertyName))
             .orElse(Collections.emptyList());
     }
 

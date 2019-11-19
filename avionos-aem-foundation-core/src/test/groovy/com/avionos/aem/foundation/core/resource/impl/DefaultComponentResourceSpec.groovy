@@ -33,7 +33,8 @@ class DefaultComponentResourceSpec extends FoundationSpec {
             }
             ales {
                 esb("ESB") {
-                    "jcr:content"(otherPagePath: "/content/avionos", externalPath: "http://www.reddit.com") {
+                    "jcr:content"(otherPagePath: "/content/avionos", externalPath: "http://www.reddit.com",
+                        pagePaths: ["/content/avionos", "/content/ales"] as String[]) {
                         // image(fileReference: "/content/dam/image")
                         secondimage(fileReference: "/content/dam/image")
                         fullers("sling:resourceType": "bitter")
@@ -82,7 +83,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
             lagers {
                 "jcr:content"(otherPagePath: "/content/avionos") {
                     dynamo("sling:resourceType": "us", related: "/content/lagers/jcr:content/spaten")
-                    stiegl("sling:resourceType": "de", related: ["/content/lagers/jcr:content/spaten", "/content/lagers/jcr:content/dynamo"] as String[])
+                    stiegl("sling:resourceType": "de",
+                        related: ["/content/lagers/jcr:content/spaten", "/content/lagers/jcr:content/dynamo"] as
+                            String[])
                     spaten("sling:resourceType": "de")
                 }
             }
@@ -96,7 +99,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
                 }
                 child {
                     "jcr:content" {
-                        component() { insidecomponent() }
+                        component() {
+                            insidecomponent()
+                        }
                         other()
                     }
                 }
@@ -329,6 +334,60 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         !componentResource.getAsPage("nonExistentProperty").present
     }
 
+    def "get as resource"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getAsResource("related").present == result
+
+        where:
+        path                                 | result
+        "/content/lagers/jcr:content/dynamo" | true
+        "/content/lagers/jcr:content"        | false
+    }
+
+    def "get as resource inherited"() {
+        setup:
+        def componentResource = getComponentResource("/content/ales/esb/lace/jcr:content")
+
+        expect:
+        componentResource.getAsResourceInherited("otherPagePath").present
+
+        and:
+        !componentResource.getAsResourceInherited("nonExistentProperty").present
+    }
+
+    def "get as resource list"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getAsResourceList("related").size() == size
+
+        where:
+        path                                 | size
+        "/content/lagers/jcr:content/stiegl" | 2
+        "/content/lagers/jcr:content/spaten" | 0
+    }
+
+    def "get as resource list inherited"() {
+        setup:
+        def componentResource = getComponentResource("/content/ales/esb/lace/jcr:content")
+
+        expect:
+        componentResource.getAsResourceListInherited("pagePaths").size() == 2
+
+        and:
+        componentResource.getAsResourceListInherited("nonExistentPagePath").empty
+
+        where:
+        path                                 | size
+        "/content/ales/esb/lace/jcr:content" | 2
+        "/content/ales/esb/jcr:content"      | 2
+        "/content/ales/jcr:content"          | 0
+    }
+
     def "get as type"() {
         setup:
         def componentResource = getComponentResource("/content/lagers/jcr:content/dynamo")
@@ -341,6 +400,10 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         Resource          | true
         ComponentResource | true
         Asset             | false
+    }
+
+    def "get as type inherited"() {
+
     }
 
     def "get as type list"() {
@@ -356,6 +419,19 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         "/content/lagers/jcr:content/stiegl" | Asset             | 0
         "/content/lagers/jcr:content/spaten" | ComponentResource | 0
         "/content/lagers/jcr:content/spaten" | Asset             | 0
+    }
+
+    def "get as type list inherited"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getAsTypeListInherited("related", type).size() == size
+
+        where:
+        path                                 | type              | size
+        "/content/lagers/jcr:content/stiegl" | ComponentResource | 2
+        "/content/lagers/jcr:content/stiegl" | Asset             | 0
     }
 
     def "get href"() {
@@ -418,6 +494,8 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         expect:
         componentResource.getImageReference("nsfwImage").get() == "omg.png"
+
+        and:
         !componentResource.getImageReference("sfwImage").present
     }
 
@@ -676,7 +754,26 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         expect:
         componentResource.getAsPageInherited("otherPagePath").get().path == "/content/avionos"
+
+        and:
         !componentResource.getAsPageInherited("nonExistentPagePath").present
+    }
+
+    def "get as page list inherited"() {
+        setup:
+        def componentResource = getComponentResource("/content/ales/esb/lace/jcr:content")
+
+        expect:
+        componentResource.getAsPageListInherited("pagePaths").size() == 2
+
+        and:
+        componentResource.getAsPageListInherited("nonExistentPagePath").empty
+
+        where:
+        path                                 | size
+        "/content/ales/esb/lace/jcr:content" | 2
+        "/content/ales/esb/jcr:content"      | 2
+        "/content/ales/jcr:content"          | 0
     }
 
     def "get component resource inherited"() {

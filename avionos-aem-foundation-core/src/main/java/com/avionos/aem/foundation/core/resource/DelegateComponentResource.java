@@ -39,7 +39,7 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public Optional<ComponentResource> findAncestor(final Predicate<ComponentResource> predicate,
+    public final Optional<ComponentResource> findAncestor(final Predicate<ComponentResource> predicate,
         final boolean excludeCurrentResource) {
         return componentResource.findAncestor(predicate, excludeCurrentResource);
     }
@@ -50,7 +50,7 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public Optional<ComponentResource> findAncestorWithProperty(final String propertyName,
+    public final Optional<ComponentResource> findAncestorWithProperty(final String propertyName,
         final boolean excludeCurrentResource) {
         return componentResource.findAncestorWithProperty(propertyName, excludeCurrentResource);
     }
@@ -62,9 +62,8 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName,
-        final V propertyValue,
-        final boolean excludeCurrentResource) {
+    public final <V> Optional<ComponentResource> findAncestorWithPropertyValue(final String propertyName,
+        final V propertyValue, final boolean excludeCurrentResource) {
         return componentResource.findAncestorWithPropertyValue(propertyName, propertyValue, excludeCurrentResource);
     }
 
@@ -161,8 +160,18 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public List<FoundationPage> getAsPageList(final String propertyName) {
+    public final List<FoundationPage> getAsPageList(final String propertyName) {
         return componentResource.getAsPageList(propertyName);
+    }
+
+    @Override
+    public final Optional<Resource> getAsResource(final String propertyName) {
+        return componentResource.getAsResource(propertyName);
+    }
+
+    @Override
+    public final List<Resource> getAsResourceList(final String propertyName) {
+        return componentResource.getAsResourceList(propertyName);
     }
 
     @Override
@@ -172,7 +181,8 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public <AdapterType> List<AdapterType> getAsTypeList(final String propertyName, final Class<AdapterType> type) {
+    public final <AdapterType> List<AdapterType> getAsTypeList(final String propertyName,
+        final Class<AdapterType> type) {
         return componentResource.getAsTypeList(propertyName, type);
     }
 
@@ -187,8 +197,18 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public List<FoundationPage> getAsPageListInherited(final String propertyName) {
+    public final List<FoundationPage> getAsPageListInherited(final String propertyName) {
         return componentResource.getAsPageListInherited(propertyName);
+    }
+
+    @Override
+    public final Optional<Resource> getAsResourceInherited(final String propertyName) {
+        return componentResource.getAsResourceInherited(propertyName);
+    }
+
+    @Override
+    public final List<Resource> getAsResourceListInherited(final String propertyName) {
+        return componentResource.getAsResourceListInherited(propertyName);
     }
 
     @Override
@@ -198,7 +218,7 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public <AdapterType> List<AdapterType> getAsTypeListInherited(final String propertyName,
+    public final <AdapterType> List<AdapterType> getAsTypeListInherited(final String propertyName,
         final Class<AdapterType> type) {
         return componentResource.getAsTypeListInherited(propertyName, type);
     }
@@ -310,7 +330,7 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public List<Tag> getTagsInherited(final String propertyName) {
+    public final List<Tag> getTagsInherited(final String propertyName) {
         return componentResource.getTagsInherited(propertyName);
     }
 

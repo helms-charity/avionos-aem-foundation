@@ -159,6 +159,19 @@ public final class DefaultComponentResource implements ComponentResource {
     }
 
     @Override
+    public Optional<Resource> getAsResource(final String propertyName) {
+        return getAsResourceOptional(getProperties().get(checkNotNull(propertyName), ""));
+    }
+
+    @Override
+    public List<Resource> getAsResourceList(final String propertyName) {
+        return Arrays.stream(getProperties().get(checkNotNull(propertyName), new String[0]))
+            .map(path -> getAsResourceOptional(path).orElse(null))
+            .filter(java.util.Objects :: nonNull)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public String getHref() {
         return getHref(false);
     }
@@ -407,6 +420,20 @@ public final class DefaultComponentResource implements ComponentResource {
     }
 
     @Override
+    public Optional<Resource> getAsResourceInherited(final String propertyName) {
+        return getAsResourceOptional(getProperties().getInherited(checkNotNull(propertyName), ""));
+    }
+
+    @Override
+    public List<Resource> getAsResourceListInherited(final String propertyName) {
+        return getAsListInherited(propertyName, String.class)
+            .stream()
+            .map(path -> getAsResourceOptional(path).orElse(null))
+            .filter(java.util.Objects :: nonNull)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public <AdapterType> Optional<AdapterType> getAsTypeInherited(final String propertyName,
         final Class<AdapterType> type) {
         return getAsTypeOptional(getProperties().getInherited(checkNotNull(propertyName), ""), type);
@@ -449,12 +476,10 @@ public final class DefaultComponentResource implements ComponentResource {
     @Override
     public List<ComponentResource> getComponentResources(final String relativePath) {
         return Optional.of(resource.getChild(checkNotNull(relativePath)))
-            .map(childResource ->
-                Lists.newArrayList(childResource.getChildren())
-                    .stream()
-                    .map(TO_COMPONENT_RESOURCE)
-                    .collect(Collectors.toList())
-            )
+            .map(childResource -> Lists.newArrayList(childResource.getChildren())
+                .stream()
+                .map(TO_COMPONENT_RESOURCE)
+                .collect(Collectors.toList()))
             .orElse(Collections.emptyList());
     }
 
@@ -515,8 +540,7 @@ public final class DefaultComponentResource implements ComponentResource {
             .map(child -> Lists.newArrayList(child.getChildren())
                 .stream()
                 .map(TO_COMPONENT_RESOURCE)
-                .collect(Collectors.toList())
-            )
+                .collect(Collectors.toList()))
             .orElse(Collections.emptyList());
     }
 

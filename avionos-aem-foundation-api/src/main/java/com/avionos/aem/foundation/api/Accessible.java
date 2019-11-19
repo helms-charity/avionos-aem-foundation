@@ -3,6 +3,7 @@ package com.avionos.aem.foundation.api;
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.page.FoundationPage;
 import com.day.cq.tagging.Tag;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 
 import java.util.List;
@@ -142,6 +143,26 @@ public interface Accessible {
      * @return list of pages for property value
      */
     List<FoundationPage> getAsPageList(String propertyName);
+
+    /**
+     * Get an <code>Optional</code> resource instance for a property on this resource containing the path of another
+     * <code>Resource</code>.
+     *
+     * @param propertyName name of property containing a resource path
+     * @return <code>Optional</code> instance of the resource, or absent if either the property does not exist or
+     * does not resolve to a resource
+     */
+    Optional<Resource> getAsResource(String propertyName);
+
+    /**
+     * Get a list of resource instances for a property on this resource containing an array of paths to other
+     * <code>Resource</code>s.
+     *
+     * @param propertyName name of property containing resource paths
+     * @return list of resources, or empty list if either the property does not exist or the resources for the paths do
+     * not resolve
+     */
+    List<Resource> getAsResourceList(String propertyName);
 
     /**
      * Get an <code>Optional</code> type instance for a property on this resource containing the path of another

@@ -51,9 +51,17 @@ class DefaultComponentResourceSpec extends FoundationSpec {
                             }
                         }
                         pint {
-                            keg { "jcr:content" { container() } }
+                            keg {
+                                "jcr:content" {
+                                    container()
+                                }
+                            }
                             barrel {
-                                "jcr:content" { container { child1() } }
+                                "jcr:content" {
+                                    container {
+                                        child1()
+                                    }
+                                }
                             }
                         }
                     }
@@ -140,8 +148,7 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         def componentResource = getComponentResource("/content/lagers/jcr:content/spaten")
 
         expect:
-        componentResource.toString() == "DefaultComponentResource{path=/content/lagers/jcr:content/spaten, " +
-            "properties={sling:resourceType=de, jcr:primaryType=nt:unstructured}}"
+        componentResource.toString() == "DefaultComponentResource{path=/content/lagers/jcr:content/spaten, properties={sling:resourceType=de, jcr:primaryType=nt:unstructured}}"
     }
 
     def "get id"() {
@@ -624,11 +631,9 @@ class DefaultComponentResourceSpec extends FoundationSpec {
         path                                               | excludeCurrentResource | ancestorPath
         "/content/inheritance/jcr:content"                 | false                  | "/content/inheritance/jcr:content"
         "/content/inheritance/child/jcr:content"           | false                  | "/content/inheritance/jcr:content"
-        "/content/inheritance/child/jcr:content/component" | false                  |
-            "/content/inheritance/jcr:content/component"
+        "/content/inheritance/child/jcr:content/component" | false                  | "/content/inheritance/jcr:content/component"
         "/content/inheritance/child/jcr:content"           | true                   | "/content/inheritance/jcr:content"
-        "/content/inheritance/child/jcr:content/component" | true                   |
-            "/content/inheritance/jcr:content/component"
+        "/content/inheritance/child/jcr:content/component" | true                   | "/content/inheritance/jcr:content/component"
     }
 
     def "find ancestor with property returns absent when current resource excluded"() {
@@ -785,10 +790,8 @@ class DefaultComponentResourceSpec extends FoundationSpec {
 
         where:
         path                                                       | inheritedNodePath
-        "/content/ales/esb/suds/pint/keg/jcr:content/container"    |
-            "/content/ales/esb/suds/jcr:content/container/child1"
-        "/content/ales/esb/suds/pint/barrel/jcr:content/container" |
-            "/content/ales/esb/suds/pint/barrel/jcr:content/container/child1"
+        "/content/ales/esb/suds/pint/keg/jcr:content/container"    | "/content/ales/esb/suds/jcr:content/container/child1"
+        "/content/ales/esb/suds/pint/barrel/jcr:content/container" | "/content/ales/esb/suds/pint/barrel/jcr:content/container/child1"
     }
 
     def "get component resource inherited is absent when ancestor not found"() {
@@ -797,6 +800,21 @@ class DefaultComponentResourceSpec extends FoundationSpec {
     }
 
     def "get component resources inherited"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.componentResourcesInherited.size() == size
+
+        where:
+        path                                                       | size
+        "/content/ales/esb/suds/pint/jcr:content/container"        | 2
+        "/content/ales/esb/suds/pint/keg/jcr:content/container"    | 2
+        "/content/ales/esb/suds/pint/barrel/jcr:content/container" | 1
+        "/content/ales/esb/bar/tree/jcr:content/wood/container"    | 3
+    }
+
+    def "get component resources inherited for relative path"() {
         setup:
         def componentResource = getComponentResource(path)
 

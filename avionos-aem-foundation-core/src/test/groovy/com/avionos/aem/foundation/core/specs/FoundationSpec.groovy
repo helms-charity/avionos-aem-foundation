@@ -19,7 +19,7 @@ abstract class FoundationSpec extends ProsperSpec {
     }
 
     ComponentResource getComponentResource(String path) {
-        resourceResolver.getResource(path).adaptTo(ComponentResource)
+        resourceResolver.resolve(path).adaptTo(ComponentResource)
     }
 
     @Override

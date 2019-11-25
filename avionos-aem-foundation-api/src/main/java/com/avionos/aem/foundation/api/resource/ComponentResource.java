@@ -108,25 +108,6 @@ public interface ComponentResource extends Linkable, Accessible, Inheritable, Tr
     List<ComponentResource> getComponentResources(String relativePath, Predicate<ComponentResource> predicate);
 
     /**
-     * Get a child resource relative to the current resource, inheriting from a parent page if it does not exist.
-     *
-     * @param relativePath path relative to current resource
-     * @return direct child resource if it exists, otherwise the child resource at this relative path for an ancestor
-     * page
-     */
-    Optional<ComponentResource> getComponentResourceInherited(String relativePath);
-
-    /**
-     * Get the children of a resource relative to the current resource. If resource does not exist relative to current
-     * page, inherit from a parent page.
-     *
-     * @param relativePath path relative to current resource
-     * @return list of resources representing children of the addressed resource or inherited from a parent page (or
-     * empty list if none exist)
-     */
-    List<ComponentResource> getComponentResourcesInherited(String relativePath);
-
-    /**
      * Get the parent of this resource.
      *
      * @return parent component resource or absent optional if resource has no parent

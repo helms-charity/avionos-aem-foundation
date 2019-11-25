@@ -531,15 +531,40 @@ public final class DefaultComponentResource implements ComponentResource {
 
     @Override
     public Optional<ComponentResource> getComponentResourceInherited(final String relativePath) {
-        return findChildResourceInherited(relativePath).map(TO_COMPONENT_RESOURCE);
+        return findChildComponentResourceInherited(relativePath);
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited() {
+        return findAncestor(componentResource -> componentResource.getResource().hasChildren())
+            .map(ComponentResource :: getComponentResources)
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited(final Predicate<ComponentResource> predicate) {
+        return findAncestor(componentResource -> componentResource.getResource().hasChildren())
+            .map(componentResource -> componentResource.getComponentResources()
+                .stream()
+                .filter(predicate)
+                .collect(Collectors.toList()))
+            .orElse(Collections.emptyList());
     }
 
     @Override
     public List<ComponentResource> getComponentResourcesInherited(final String relativePath) {
-        return findChildResourceInherited(relativePath)
-            .map(child -> Lists.newArrayList(child.getChildren())
+        return findChildComponentResourceInherited(relativePath)
+            .map(ComponentResource :: getComponentResources)
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited(final String relativePath,
+        final Predicate<ComponentResource> predicate) {
+        return findChildComponentResourceInherited(relativePath)
+            .map(componentResource -> componentResource.getComponentResources()
                 .stream()
-                .map(TO_COMPONENT_RESOURCE)
+                .filter(predicate)
                 .collect(Collectors.toList()))
             .orElse(Collections.emptyList());
     }
@@ -624,7 +649,7 @@ public final class DefaultComponentResource implements ComponentResource {
             .map(page -> contentResourceFunction.apply(page).adaptTo(ComponentResource.class));
     }
 
-    private Optional<Resource> findChildResourceInherited(final String relativePath) {
+    private Optional<ComponentResource> findChildComponentResourceInherited(final String relativePath) {
         final Page containingPage = resource.getResourceResolver().adaptTo(PageManager.class)
             .getContainingPage(resource);
 
@@ -642,7 +667,8 @@ public final class DefaultComponentResource implements ComponentResource {
         final String resourcePath = builder.toString();
 
         return findAncestorPage(containingPage, page -> page.getContentResource(resourcePath) != null, false)
-            .map(page -> page.getContentResource(resourcePath));
+            .map(page -> page.getContentResource(resourcePath))
+            .map(TO_COMPONENT_RESOURCE);
     }
 
     private Optional<Page> findAncestorPage(final Page page, final Predicate<Page> predicate,

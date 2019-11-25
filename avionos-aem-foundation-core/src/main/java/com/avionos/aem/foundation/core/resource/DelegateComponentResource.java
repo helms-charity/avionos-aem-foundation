@@ -305,7 +305,7 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
-    public List<Tag> getTags(final String propertyName) {
+    public final List<Tag> getTags(final String propertyName) {
         return componentResource.getTags(propertyName);
     }
 
@@ -360,8 +360,24 @@ public abstract class DelegateComponentResource implements ComponentResource {
     }
 
     @Override
+    public final List<ComponentResource> getComponentResourcesInherited() {
+        return componentResource.getComponentResourcesInherited();
+    }
+
+    @Override
+    public final List<ComponentResource> getComponentResourcesInherited(final Predicate<ComponentResource> predicate) {
+        return componentResource.getComponentResourcesInherited(predicate);
+    }
+
+    @Override
     public final List<ComponentResource> getComponentResourcesInherited(final String relativePath) {
         return componentResource.getComponentResourcesInherited(relativePath);
+    }
+
+    @Override
+    public final List<ComponentResource> getComponentResourcesInherited(final String relativePath,
+        final Predicate<ComponentResource> predicate) {
+        return componentResource.getComponentResourcesInherited(relativePath, predicate);
     }
 
     @Override

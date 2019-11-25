@@ -332,6 +332,41 @@ public final class DefaultFoundationPage implements FoundationPage {
     }
 
     @Override
+    public Optional<ComponentResource> getComponentResourceInherited(final String relativePath) {
+        return getComponentResource()
+            .flatMap(componentResource -> componentResource.getComponentResourceInherited(relativePath));
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited() {
+        return getComponentResource()
+            .map(Inheritable :: getComponentResourcesInherited)
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited(final Predicate<ComponentResource> predicate) {
+        return getComponentResource()
+            .map(componentResource -> componentResource.getComponentResourcesInherited(predicate))
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited(final String relativePath) {
+        return getComponentResource()
+            .map(componentResource -> componentResource.getComponentResourcesInherited(relativePath))
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<ComponentResource> getComponentResourcesInherited(final String relativePath,
+        final Predicate<ComponentResource> predicate) {
+        return getComponentResource()
+            .map(componentResource -> componentResource.getComponentResourcesInherited(relativePath, predicate))
+            .orElse(Collections.emptyList());
+    }
+
+    @Override
     public Optional<Link> getAsLink(final String propertyName) {
         return getComponentResource().flatMap(componentResource -> componentResource.getAsLink(propertyName));
     }

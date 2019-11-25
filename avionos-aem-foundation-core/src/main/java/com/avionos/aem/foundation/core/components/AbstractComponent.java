@@ -173,6 +173,16 @@ public abstract class AbstractComponent implements ComponentResource {
     }
 
     @Override
+    public final List<ComponentResource> getComponentResourcesInherited() {
+        return componentResource.getComponentResourcesInherited();
+    }
+
+    @Override
+    public final List<ComponentResource> getComponentResourcesInherited(final Predicate<ComponentResource> predicate) {
+        return componentResource.getComponentResourcesInherited(predicate);
+    }
+
+    @Override
     public final Optional<String> getAsHref(final String propertyName, final boolean strict, final boolean mapped) {
         return componentResource.getAsHref(propertyName, strict, mapped);
     }
@@ -185,6 +195,12 @@ public abstract class AbstractComponent implements ComponentResource {
     @Override
     public final List<ComponentResource> getComponentResourcesInherited(final String relativePath) {
         return componentResource.getComponentResourcesInherited(relativePath);
+    }
+
+    @Override
+    public final List<ComponentResource> getComponentResourcesInherited(final String relativePath,
+        final Predicate<ComponentResource> predicate) {
+        return componentResource.getComponentResourcesInherited(relativePath, predicate);
     }
 
     @Override

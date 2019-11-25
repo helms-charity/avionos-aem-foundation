@@ -2,11 +2,13 @@ package com.avionos.aem.foundation.api;
 
 import com.avionos.aem.foundation.api.link.Link;
 import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.resource.ComponentResource;
 import com.day.cq.tagging.Tag;
 import org.apache.sling.api.resource.Resource;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * An accessible instance (such as a <code>Resource</code> or <code>Page</code>) that supports hierarchy-based content
@@ -216,4 +218,53 @@ public interface Inheritable {
      * @return list of tags or empty list if not found
      */
     List<Tag> getTagsInherited(String propertyName);
+
+    /**
+     * Get a child resource relative to the current resource, inheriting from a parent page if it does not exist.
+     *
+     * @param relativePath path relative to current resource
+     * @return direct child resource if it exists, otherwise the child resource at this relative path for an ancestor
+     * page
+     */
+    Optional<ComponentResource> getComponentResourceInherited(String relativePath);
+
+    /**
+     * Get the children of the current resource.  If the current resource has no children, inherit from an ancestor
+     * page.
+     *
+     * @return list of resources representing children of the current resource or inherited from an ancestor page (or
+     * empty list if none exist)
+     */
+    List<ComponentResource> getComponentResourcesInherited();
+
+    /**
+     * Get the children of the current resource meeting the predicate condition.  If the current resource has no
+     * children, inherit from an ancestor page.
+     *
+     * @param predicate predicate used to filter resources
+     * @return list of resources representing children of the current resource or inherited from an ancestor page (or
+     * empty list if none exist)
+     */
+    List<ComponentResource> getComponentResourcesInherited(Predicate<ComponentResource> predicate);
+
+    /**
+     * Get the children of a resource relative to the current resource. If resource does not exist relative to current
+     * page, inherit from a parent page.
+     *
+     * @param relativePath path relative to current resource
+     * @return list of resources representing children of the addressed resource or inherited from a parent page (or
+     * empty list if none exist)
+     */
+    List<ComponentResource> getComponentResourcesInherited(String relativePath);
+
+    /**
+     * Get the children of a resource relative to the current resource meeting the predicate condition. If resource does
+     * not exist relative to current page, inherit from a parent page.
+     *
+     * @param relativePath path relative to current resource
+     * @param predicate predicate used to filter resources
+     * @return list of resources representing children of the addressed resource or inherited from a parent page (or
+     * empty list if none exist)
+     */
+    List<ComponentResource> getComponentResourcesInherited(String relativePath, Predicate<ComponentResource> predicate);
 }

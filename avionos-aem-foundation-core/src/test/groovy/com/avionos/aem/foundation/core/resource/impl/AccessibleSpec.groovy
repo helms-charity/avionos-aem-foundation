@@ -337,4 +337,17 @@ class AccessibleSpec extends AbstractComponentResourceSpec {
         "imageWithRenditions" | "one"         | true
         "imageWithRenditions" | "four"        | false
     }
+
+    def "get tags"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getTags("tags").size() == size
+
+        where:
+        path                                  | size
+        "/content/avionos/jcr:content"        | 2
+        "/content/avionos/jcr:content/malort" | 0
+    }
 }

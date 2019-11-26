@@ -221,4 +221,18 @@ class InheritableSpec extends AbstractComponentResourceSpec {
         componentResource.getInherited("otherPagePath", String).present
         !componentResource.getInherited("nonExistentProperty", String).present
     }
+
+    def "get tags inherited"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getTagsInherited("tags").size() == size
+
+        where:
+        path                                  | size
+        "/content/ales/esb/jcr:content"       | 1
+        "/content/ales/esb/suds/jcr:content"  | 1
+        "/content/avionos/jcr:content/malort" | 0
+    }
 }

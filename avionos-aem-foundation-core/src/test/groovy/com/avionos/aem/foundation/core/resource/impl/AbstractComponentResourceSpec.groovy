@@ -1,6 +1,8 @@
 package com.avionos.aem.foundation.core.resource.impl
 
 import com.avionos.aem.foundation.core.specs.FoundationSpec
+import com.day.cq.tagging.TagConstants
+import org.apache.sling.jcr.resource.api.JcrResourceConstants
 
 abstract class AbstractComponentResourceSpec extends FoundationSpec {
 
@@ -9,7 +11,8 @@ abstract class AbstractComponentResourceSpec extends FoundationSpec {
             avionos("Avionos") {
                 "jcr:content"(otherPagePath: "/content/ales/esb", nonExistentPagePath: "/content/home",
                     externalPath: "http://www.reddit.com", multiValue: ["one", "two"],
-                    fileReference: "/content/dam/image") {
+                    fileReference: "/content/dam/image",
+                    tags: ["avionos:experience", "avionos:commerce"] as String[]) {
                     image(fileReference: "/content/dam/image")
                     secondimage(fileReference: "/content/dam/image")
                     thirdimage()
@@ -26,7 +29,8 @@ abstract class AbstractComponentResourceSpec extends FoundationSpec {
             ales {
                 esb("ESB") {
                     "jcr:content"(otherPagePath: "/content/avionos", externalPath: "http://www.reddit.com",
-                        pagePaths: ["/content/avionos", "/content/ales"] as String[]) {
+                        pagePaths: ["/content/avionos", "/content/ales"] as String[],
+                        tags: ["avionos:experience"] as String[]) {
                         secondimage(fileReference: "/content/dam/image")
                         fullers("sling:resourceType": "bitter")
                         morland("sling:resourceType": "bitter")
@@ -107,6 +111,15 @@ abstract class AbstractComponentResourceSpec extends FoundationSpec {
                         }
                         other()
                     }
+                }
+            }
+        }
+
+        nodeBuilder.content {
+            "cq:tags"(JcrResourceConstants.NT_SLING_FOLDER) {
+                avionos(TagConstants.NT_TAG) {
+                    experience(TagConstants.NT_TAG)
+                    commerce(TagConstants.NT_TAG)
                 }
             }
         }

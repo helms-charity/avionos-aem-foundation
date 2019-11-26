@@ -236,8 +236,7 @@ public final class DefaultComponentResource implements ComponentResource {
 
     @Override
     public Optional<String> getImageReference(final String name) {
-        return Optional.ofNullable(getProperties().get(checkNotNull(name) + "/" + DownloadResource.PN_REFERENCE,
-            String.class));
+        return Optional.ofNullable(getProperties().get(getImageReferencePropertyName(name), String.class));
     }
 
     @Override
@@ -247,12 +246,9 @@ public final class DefaultComponentResource implements ComponentResource {
 
     @Override
     public Optional<String> getImageRendition(final String name, final String renditionName) {
-        checkNotNull(name);
         checkNotNull(renditionName);
 
-        return getImageReference(name)
-            .map(imageReference -> resource.getResourceResolver().getResource(imageReference))
-            .map(assetResource -> assetResource.adaptTo(Asset.class))
+        return getAsType(getImageReferencePropertyName(name), Asset.class)
             .flatMap(asset -> asset.getRenditions()
                 .stream()
                 .filter(rendition -> rendition.getName().equals(renditionName))
@@ -702,5 +698,9 @@ public final class DefaultComponentResource implements ComponentResource {
         }
 
         return properties;
+    }
+
+    private String getImageReferencePropertyName(final String name) {
+        return checkNotNull(name) + "/" + DownloadResource.PN_REFERENCE;
     }
 }

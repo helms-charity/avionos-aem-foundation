@@ -23,7 +23,7 @@ abstract class AbstractTagDataSourceServlet extends AbstractOptionsDataSourceSer
     @Override
     protected List<Option> getOptions(final SlingHttpServletRequest request) {
         final TagManager tagManager = request.getResourceResolver().adaptTo(TagManager.class);
-        final Tag containerTag = tagManager.resolve(getNamespace() + getContainerTag());
+        final Tag containerTag = tagManager.resolve(getNamespace() + getContainerTagRelativePath());
 
         final List<Option> options = new ArrayList<>();
 
@@ -53,9 +53,9 @@ abstract class AbstractTagDataSourceServlet extends AbstractOptionsDataSourceSer
      * servlet. Defaults to an empty string if not overridden, resulting in all child tags directly under the namespace
      * tag being returned.
      *
-     * @return the path of the containing tag.
+     * @return the path of the containing tag
      */
-    protected String getContainerTag() {
+    protected String getContainerTagRelativePath() {
         return "";
     }
 

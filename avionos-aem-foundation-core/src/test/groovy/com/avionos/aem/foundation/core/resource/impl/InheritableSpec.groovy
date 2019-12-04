@@ -5,8 +5,43 @@ import com.day.cq.dam.api.Asset
 import org.apache.sling.api.resource.Resource
 import spock.lang.Unroll
 
+import java.util.function.Predicate
+
 @Unroll
 class InheritableSpec extends AbstractComponentResourceSpec {
+
+    def "get image reference inherited"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.imageReferenceInherited.present == isPresent
+
+        where:
+        path                                 | isPresent
+        "/content/avionos/jcr:content"       | true
+        "/content/avionos/about/jcr:content" | true
+        "/content/ales/esb/jcr:content"      | false
+    }
+
+    def "get self image reference inherited"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        expect:
+        componentResource.getImageReferenceInherited(isSelf).present == isPresent
+
+        where:
+        path                                       | isSelf | isPresent
+        "/content/avionos/jcr:content"             | false  | true
+        "/content/avionos/jcr:content"             | true   | true
+        "/content/avionos/about/jcr:content"       | false  | true
+        "/content/avionos/about/jcr:content"       | true   | true
+        "/content/ales/esb/jcr:content"            | false  | false
+        "/content/ales/esb/jcr:content"            | true   | false
+        "/content/ales/esb/jcr:content/greeneking" | true   | false
+        "/content/ales/esb/jcr:content/greeneking" | false  | true
+    }
 
     def "get as resource inherited"() {
         setup:
@@ -136,10 +171,10 @@ class InheritableSpec extends AbstractComponentResourceSpec {
 
     def "get as page list inherited"() {
         setup:
-        def componentResource = getComponentResource("/content/ales/esb/lace/jcr:content")
+        def componentResource = getComponentResource(path)
 
         expect:
-        componentResource.getAsPageListInherited("pagePaths").size() == 2
+        componentResource.getAsPageListInherited("pagePaths").size() == size
 
         and:
         componentResource.getAsPageListInherited("nonExistentPagePath").empty
@@ -184,6 +219,27 @@ class InheritableSpec extends AbstractComponentResourceSpec {
         "/content/ales/esb/bar/tree/jcr:content/wood/container"    | 3
     }
 
+    def "get component resources inherited for predicate"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        def predicate = new Predicate<ComponentResource>() {
+            @Override
+            boolean test(ComponentResource cr) {
+                cr.get("jcr:title", "") == "Zeus"
+            }
+        }
+
+        expect:
+        componentResource.getComponentResourcesInherited(predicate).size() == size
+
+        where:
+        path                                                       | size
+        "/content/ales/esb/suds/pint/jcr:content/container"        | 1
+        "/content/ales/esb/suds/pint/keg/jcr:content/container"    | 1
+        "/content/ales/esb/suds/pint/barrel/jcr:content/container" | 0
+    }
+
     def "get component resources inherited for relative path"() {
         setup:
         def componentResource = getComponentResource(path)
@@ -197,6 +253,27 @@ class InheritableSpec extends AbstractComponentResourceSpec {
         "/content/ales/esb/suds/pint/keg/jcr:content"    | 0
         "/content/ales/esb/suds/pint/barrel/jcr:content" | 1
         "/content/ales/esb/bar/tree/jcr:content/wood"    | 3
+    }
+
+    def "get component resources inherited for relative path and predicate"() {
+        setup:
+        def componentResource = getComponentResource(path)
+
+        def predicate = new Predicate<ComponentResource>() {
+            @Override
+            boolean test(ComponentResource cr) {
+                cr.get("jcr:title", "") == "Zeus"
+            }
+        }
+
+        expect:
+        componentResource.getComponentResourcesInherited("container", predicate).size() == size
+
+        where:
+        path                                             | size
+        "/content/ales/esb/suds/pint/jcr:content"        | 1
+        "/content/ales/esb/suds/pint/keg/jcr:content"    | 0
+        "/content/ales/esb/suds/pint/barrel/jcr:content" | 0
     }
 
     def "get inherited"() {

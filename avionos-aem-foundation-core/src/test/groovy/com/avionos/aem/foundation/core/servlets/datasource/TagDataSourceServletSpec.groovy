@@ -1,19 +1,22 @@
 package com.avionos.aem.foundation.core.servlets.datasource
 
 import com.adobe.granite.ui.components.ds.DataSource
-import com.day.cq.commons.Filter
-import com.day.cq.tagging.Tag
 import com.avionos.aem.foundation.core.servlets.optionsprovider.Option
 import com.avionos.aem.foundation.core.specs.FoundationSpec
+import com.day.cq.commons.Filter
+import com.day.cq.tagging.Tag
 import org.apache.sling.api.SlingHttpServletRequest
 
 import static com.day.cq.tagging.TagConstants.NT_TAG
 
 class TagDataSourceServletSpec extends FoundationSpec {
 
-    static final def MAP = ["lager": "Lager", "stout": "Stout", "porter": "Porter", "ale": "Ale"]
-
-    static final def OPTIONS = Option.fromMap(MAP)
+    static final def OPTIONS = Option.fromMap([
+        "lager": "Lager",
+        "stout": "Stout",
+        "porter": "Porter",
+        "ale": "Ale"
+    ])
 
     class BasicTagDataSourceServlet extends AbstractTagDataSourceServlet {
 
@@ -41,11 +44,27 @@ class TagDataSourceServletSpec extends FoundationSpec {
         }
     }
 
+    class ContainerTagDataSourceServlet extends AbstractTagDataSourceServlet {
+
+        @Override
+        protected String getNamespace() {
+            "beers:"
+        }
+
+        @Override
+        protected String getContainerTagRelativePath() {
+            "lager"
+        }
+    }
+
     def setupSpec() {
         nodeBuilder.content {
             "cq:tags"("sling:Folder") {
                 beers(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Beers") {
-                    lager(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Lager")
+                    lager(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Lager") {
+                        pilsner(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Pilsner")
+                        helles(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Helles")
+                    }
                     stout(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Stout")
                     porter(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Porter")
                     ale(NT_TAG, "sling:resourceType": "cq/tagging/components/tag", "jcr:title": "Ale")
@@ -76,6 +95,18 @@ class TagDataSourceServletSpec extends FoundationSpec {
 
         then:
         assertDataSourceOptions(request, Option.fromMap(["lager": "Lager", "ale": "Ale"]))
+    }
+
+    def "container tag options"() {
+        def servlet = new ContainerTagDataSourceServlet()
+        def request = requestBuilder.build()
+        def response = responseBuilder.build()
+
+        when:
+        servlet.doGet(request, response)
+
+        then:
+        assertDataSourceOptions(request, Option.fromMap(["pilsner": "Pilsner", "helles": "Helles"]))
     }
 
     void assertDataSourceOptions(SlingHttpServletRequest request, List<Option> options) {

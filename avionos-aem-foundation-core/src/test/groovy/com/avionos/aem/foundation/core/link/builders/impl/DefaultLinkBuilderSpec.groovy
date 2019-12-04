@@ -6,6 +6,8 @@ import com.avionos.aem.foundation.core.link.builders.factory.LinkBuilderFactory
 import com.avionos.aem.foundation.core.specs.FoundationSpec
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
+import com.google.common.collect.LinkedHashMultimap
+import com.google.common.collect.SetMultimap
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
@@ -167,6 +169,16 @@ class DefaultLinkBuilderSpec extends FoundationSpec {
         link.href == "http://www.olsondigital.com/about.html"
     }
 
+    def "build link with selector in path"() {
+        setup:
+        def link = LinkBuilderFactory.forPath("/content/dam/image.png").build()
+
+        expect:
+        link.path == "/content/dam/image.png"
+        link.href == "/content/dam/image.png"
+        link.extension == "png"
+    }
+
     def "build link for path"() {
         setup:
         def builder = LinkBuilderFactory.forPath("/content")
@@ -213,6 +225,56 @@ class DefaultLinkBuilderSpec extends FoundationSpec {
         external | href
         true     | "/content"
         false    | "/content.html"
+    }
+
+    def "build link with property"() {
+        setup:
+        def link = LinkBuilderFactory.forPath("/content").addProperty("name", "Mark").build()
+
+        expect:
+        link.properties["name"] == "Mark"
+    }
+
+    def "build link with multiple properties"() {
+        setup:
+        def link = LinkBuilderFactory.forPath("/content")
+            .addProperty("firstName", "Mark")
+            .addProperty("lastName", "Daugherty")
+            .build()
+
+        expect:
+        link.properties["firstName"] == "Mark"
+        link.properties["lastName"] == "Daugherty"
+    }
+
+    def "build link with properties"() {
+        setup:
+        def link = LinkBuilderFactory.forPath("/content")
+            .addProperties(["firstName": "Mark", "lastName": "Daugherty"])
+            .build()
+
+        expect:
+        link.properties["firstName"] == "Mark"
+        link.properties["lastName"] == "Daugherty"
+    }
+
+    def "build link for path with selector"() {
+        setup:
+        def link = LinkBuilderFactory.forPath("/content").addSelector("a").build()
+
+        expect:
+        link.href == "/content.a.html"
+    }
+
+    def "build link for path with multiple selectors"() {
+        setup:
+        def link = LinkBuilderFactory.forPath("/content")
+            .addSelector("a")
+            .addSelector("b")
+            .build()
+
+        expect:
+        link.href == "/content.a.b.html"
     }
 
     def "build link for path with selectors"() {
@@ -282,6 +344,21 @@ class DefaultLinkBuilderSpec extends FoundationSpec {
         [:]                  | "/content.html"         | ""
         ["a": "1"]           | "/content.html?a=1"     | "?a=1"
         ["a": "1", "b": "2"] | "/content.html?a=1&b=2" | "?a=1&b=2"
+    }
+
+    def "build link for path with multimap parameters"() {
+        setup:
+        SetMultimap<String, String> parameters = LinkedHashMultimap.create()
+
+        parameters.put("a", "1")
+        parameters.put("a", "2")
+        parameters.put("b", "1")
+
+        def link = LinkBuilderFactory.forPath("/content").addParameters(parameters).build()
+
+        expect:
+        link.href == "/content.html?a=1&a=2&b=1"
+        link.queryString == "?a=1&a=2&b=1"
     }
 
     def "build link for path with same-name parameters"() {

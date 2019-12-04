@@ -183,6 +183,19 @@ class AccessibleSpec extends AbstractComponentResourceSpec {
         !componentResource.getAsPage("nonExistentProperty").present
     }
 
+    def "get as page list"() {
+        setup:
+        def componentResource = getComponentResource("/content/ales/esb/jcr:content")
+
+        expect:
+        componentResource.getAsPageList(propertyName).size() == size
+
+        where:
+        propertyName          | size
+        "pagePaths"           | 2
+        "nonExistentProperty" | 0
+    }
+
     def "get as resource"() {
         setup:
         def componentResource = getComponentResource(path)
@@ -287,9 +300,10 @@ class AccessibleSpec extends AbstractComponentResourceSpec {
         componentResource.hasImage == hasImage
 
         where:
-        path                            | hasImage
-        "/content/avionos/jcr:content"  | true
-        "/content/ales/esb/jcr:content" | false
+        path                                       | hasImage
+        "/content/avionos/jcr:content"             | true
+        "/content/ales/esb/jcr:content"            | false
+        "/content/ales/esb/jcr:content/greeneking" | true
     }
 
     def "has named image"() {

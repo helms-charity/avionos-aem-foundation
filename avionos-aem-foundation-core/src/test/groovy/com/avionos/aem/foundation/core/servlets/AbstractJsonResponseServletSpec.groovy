@@ -75,8 +75,7 @@ class AbstractJsonResponseServletSpec extends FoundationSpec {
         servlet.doGet(request, response)
 
         then:
-        response.outputAsString == new JsonBuilder(
-            [one: "Hello.", two: formatDate("yyyy", Locale.CHINA)]).toString()
+        response.outputAsString == new JsonBuilder([one: "Hello.", two: formatDate("yyyy", Locale.CHINA)]).toString()
     }
 
     private static def formatDate(String dateFormat, Locale locale) {

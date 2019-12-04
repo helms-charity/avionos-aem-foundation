@@ -8,6 +8,34 @@ import java.util.function.Predicate
 @Unroll
 class DefaultComponentResourceSpec extends AbstractComponentResourceSpec {
 
+    def "equals"() {
+        setup:
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
+        def other = getComponentResource(otherPath)
+
+        expect:
+        (componentResource == other) == equals
+
+        where:
+        otherPath                           | equals
+        "/content/avionos/jcr:content"      | true
+        "/content/avionos/jcr:content/beer" | false
+    }
+
+    def "hash code"() {
+        setup:
+        def componentResource = getComponentResource("/content/avionos/jcr:content")
+        def other = getComponentResource(otherPath)
+
+        expect:
+        (componentResource.hashCode() == other.hashCode()) == equals
+
+        where:
+        otherPath                           | equals
+        "/content/avionos/jcr:content"      | true
+        "/content/avionos/jcr:content/beer" | false
+    }
+
     def "to string"() {
         setup:
         def componentResource = getComponentResource("/content/lagers/jcr:content/spaten")

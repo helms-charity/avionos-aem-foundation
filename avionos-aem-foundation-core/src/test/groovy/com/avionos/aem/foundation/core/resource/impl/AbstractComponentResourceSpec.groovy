@@ -25,6 +25,7 @@ abstract class AbstractComponentResourceSpec extends FoundationSpec {
                         two("sling:resourceType": "tew")
                     }
                 }
+                about()
             }
             ales {
                 esb("ESB") {

@@ -6,7 +6,6 @@ import com.day.cq.wcm.api.policies.ContentPolicyManager;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
@@ -16,7 +15,6 @@ import java.util.Optional;
  * Injects the content policy for the current resource.
  */
 @Component(service = Injector.class)
-@ServiceRanking(9999)
 public final class ContentPolicyInjector implements Injector {
 
     @Override

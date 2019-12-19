@@ -27,7 +27,7 @@ import java.util.List;
  * Injector for objects derived from the current component context.
  */
 @Component(service = Injector.class)
-@ServiceRanking(9999)
+@ServiceRanking(Integer.MIN_VALUE)
 public final class ComponentInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentInjector.class);

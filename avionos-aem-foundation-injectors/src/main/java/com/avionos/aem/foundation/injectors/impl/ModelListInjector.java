@@ -5,7 +5,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.ParameterizedType;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component(service = Injector.class)
-@ServiceRanking(999)
 public final class ModelListInjector implements Injector {
 
     @Override

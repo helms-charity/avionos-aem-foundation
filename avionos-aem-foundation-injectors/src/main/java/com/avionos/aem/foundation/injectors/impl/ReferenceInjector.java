@@ -12,7 +12,6 @@ import org.apache.sling.models.spi.injectorspecific.AbstractInjectAnnotationProc
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessor2;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessorFactory2;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component(service = Injector.class)
-@ServiceRanking(4000)
 public final class ReferenceInjector extends AbstractComponentResourceInjector
     implements InjectAnnotationProcessorFactory2 {
 

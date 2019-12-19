@@ -13,7 +13,6 @@ import org.apache.sling.models.spi.injectorspecific.AbstractInjectAnnotationProc
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessor2;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessorFactory2;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 import static com.avionos.aem.foundation.injectors.utils.FoundationInjectorUtils.isDeclaredTypeCollection;
 
 @Component(service = Injector.class)
-@ServiceRanking(800)
 public final class TagInjector extends AbstractComponentResourceInjector implements InjectAnnotationProcessorFactory2,
     AcceptsNullName {
 

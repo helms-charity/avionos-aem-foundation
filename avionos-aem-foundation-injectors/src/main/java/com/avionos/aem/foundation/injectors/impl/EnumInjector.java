@@ -4,13 +4,11 @@ import com.avionos.aem.foundation.api.resource.ComponentResource;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 
 @Component(service = Injector.class)
-@ServiceRanking(4000)
 public final class EnumInjector extends AbstractComponentResourceInjector {
 
     @Override

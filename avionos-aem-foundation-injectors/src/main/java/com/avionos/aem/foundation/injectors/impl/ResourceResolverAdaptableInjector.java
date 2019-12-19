@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
  * Injector for objects that are adaptable from a Sling resource resolver.
  */
 @Component(service = Injector.class)
-@ServiceRanking(-9999)
+@ServiceRanking(Integer.MAX_VALUE)
 public final class ResourceResolverAdaptableInjector implements Injector, AcceptsNullName {
 
     @Override

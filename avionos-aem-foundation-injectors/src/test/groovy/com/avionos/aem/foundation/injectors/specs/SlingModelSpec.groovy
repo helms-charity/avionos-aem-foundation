@@ -34,17 +34,17 @@ abstract class SlingModelSpec extends FoundationSpec {
      */
     void registerDefaultInjectors() {
         slingContext.with {
-            registerInjector(new ComponentInjector(), Integer.MAX_VALUE)
-            registerInjector(new ResourceResolverAdaptableInjector(), Integer.MIN_VALUE)
-            registerInjector(new ContentPolicyInjector(), Integer.MAX_VALUE)
-            registerInjector(new TagInjector(), 800)
-            registerInjector(new EnumInjector(), 4000)
-            registerInjector(new ImageInjector(), 4000)
-            registerInjector(new InheritInjector(), 4000)
-            registerInjector(new LinkInjector(), 4000)
-            registerInjector(new ReferenceInjector(), 4000)
-            registerInjector(new ModelListInjector(), 999)
-            registerInjector(new ValueMapFromRequestInjector(), 2500)
+            registerInjector(new ComponentInjector(), Integer.MIN_VALUE)
+            registerInjector(new ResourceResolverAdaptableInjector(), Integer.MAX_VALUE)
+            registerInjector(new ContentPolicyInjector())
+            registerInjector(new TagInjector())
+            registerInjector(new EnumInjector())
+            registerInjector(new ImageInjector())
+            registerInjector(new InheritInjector())
+            registerInjector(new LinkInjector())
+            registerInjector(new ReferenceInjector())
+            registerInjector(new ModelListInjector())
+            registerInjector(new ValueMapFromRequestInjector())
         }
     }
 }

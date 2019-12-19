@@ -2,11 +2,21 @@ package com.avionos.aem.foundation.core.resource.impl
 
 import com.avionos.aem.foundation.api.resource.ComponentResource
 import com.day.cq.dam.api.Asset
+import io.wcm.testing.mock.aem.junit.AemContext
+import io.wcm.testing.mock.aem.junit.AemContextBuilder
 import org.apache.sling.api.resource.Resource
+import org.apache.sling.testing.mock.sling.ResourceResolverType
 import spock.lang.Unroll
 
 @Unroll
 class AccessibleSpec extends AbstractComponentResourceSpec {
+
+    @Override
+    AemContext getAemContext() {
+        new AemContextBuilder(ResourceResolverType.JCR_OAK)
+            .resourceResolverFactoryActivatorProps(["resource.resolver.mapping": ["/content/:/", "/-/"] as String[]])
+            .build()
+    }
 
     def "as map"() {
         setup:

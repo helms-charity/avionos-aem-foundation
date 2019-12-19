@@ -1,9 +1,19 @@
 package com.avionos.aem.foundation.core.resource.impl
 
+import io.wcm.testing.mock.aem.junit.AemContext
+import io.wcm.testing.mock.aem.junit.AemContextBuilder
+import org.apache.sling.testing.mock.sling.ResourceResolverType
 import spock.lang.Unroll
 
 @Unroll
 class LinkableSpec extends AbstractComponentResourceSpec {
+
+    @Override
+    AemContext getAemContext() {
+        new AemContextBuilder(ResourceResolverType.JCR_OAK)
+            .resourceResolverFactoryActivatorProps(["resource.resolver.mapping": ["/content/:/", "/-/"] as String[]])
+            .build()
+    }
 
     def "get href"() {
         setup:

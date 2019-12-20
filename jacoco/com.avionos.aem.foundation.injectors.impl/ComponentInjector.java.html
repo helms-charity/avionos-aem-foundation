@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComponentInjector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Injectors</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.injectors.impl</a> &gt; <span class="el_source">ComponentInjector.java</span></div><h1>ComponentInjector.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.injectors.impl;
+
+import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.page.FoundationPageManager;
+import com.avionos.aem.foundation.api.resource.ComponentResource;
+import com.avionos.aem.foundation.injectors.utils.FoundationInjectorUtils;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.WCMMode;
+import com.google.common.collect.ImmutableList;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.models.spi.DisposalCallbackRegistry;
+import org.apache.sling.models.spi.Injector;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.propertytypes.ServiceRanking;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
+import java.util.List;
+
+/**
+ * Injector for objects derived from the current component context.
+ */
+@Component(service = Injector.class)
+@ServiceRanking(Integer.MIN_VALUE)
+<span class="fc" id="L31">public final class ComponentInjector implements Injector {</span>
+
+<span class="fc" id="L33">    private static final Logger LOG = LoggerFactory.getLogger(ComponentInjector.class);</span>
+
+<span class="fc" id="L35">    private static final List&lt;Class&gt; REQUEST_INJECTABLES = ImmutableList.of(</span>
+<span class="fc" id="L36">        SlingHttpServletRequest.class,</span>
+<span class="fc" id="L37">        WCMMode.class</span>
+    );
+
+<span class="fc" id="L40">    private static final List&lt;Class&gt; RESOURCE_INJECTABLES = ImmutableList.of(</span>
+<span class="fc" id="L41">        Resource.class,</span>
+<span class="fc" id="L42">        ResourceResolver.class,</span>
+<span class="fc" id="L43">        ValueMap.class,</span>
+<span class="fc" id="L44">        ComponentResource.class,</span>
+<span class="fc" id="L45">        Page.class,</span>
+<span class="fc" id="L46">        FoundationPage.class,</span>
+<span class="fc" id="L47">        PageManager.class,</span>
+<span class="fc" id="L48">        FoundationPageManager.class</span>
+<span class="fc" id="L49">    );</span>
+
+    @Override
+    public String getName() {
+<span class="fc" id="L53">        return &quot;component&quot;;</span>
+    }
+
+    @Override
+    public Object getValue(final Object adaptable, final String name, final Type type, final AnnotatedElement element,
+        final DisposalCallbackRegistry registry) {
+<span class="fc" id="L59">        Object value = null;</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (type instanceof Class) {</span>
+<span class="fc" id="L62">            final Class clazz = (Class) type;</span>
+
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (REQUEST_INJECTABLES.contains(clazz)) {</span>
+<span class="nc" id="L65">                value = getValueForRequest(clazz, adaptable);</span>
+<span class="pc bfc" id="L66" title="All 2 branches covered.">            } else if (RESOURCE_INJECTABLES.contains(clazz)) {</span>
+<span class="fc" id="L67">                value = getValueForResource(clazz, adaptable);</span>
+            }
+        }
+
+<span class="fc" id="L71">        return value;</span>
+    }
+
+    private Object getValueForRequest(final Class clazz, final Object adaptable) {
+<span class="nc" id="L75">        final SlingHttpServletRequest request = FoundationInjectorUtils.getRequest(adaptable);</span>
+
+<span class="nc" id="L77">        Object value = null;</span>
+
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (request != null) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (clazz == SlingHttpServletRequest.class) {</span>
+<span class="nc" id="L81">                value = request;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            } else if (clazz == WCMMode.class) {</span>
+<span class="nc" id="L83">                value = WCMMode.fromRequest(request);</span>
+<span class="nc" id="L84">            } else {</span>
+<span class="nc" id="L85">                LOG.debug(&quot;class : {} is not supported by this injector&quot;, clazz.getName());</span>
+            }
+
+<span class="nc" id="L88">            LOG.debug(&quot;injecting class : {} with instance : {}&quot;, clazz.getName(), value);</span>
+        }
+
+<span class="nc" id="L91">        return value;</span>
+    }
+
+    private Object getValueForResource(final Class clazz, final Object adaptable) {
+<span class="fc" id="L95">        final Resource resource = FoundationInjectorUtils.getResource(adaptable);</span>
+
+<span class="fc" id="L97">        Object value = null;</span>
+
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (resource != null) {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (clazz == Resource.class) {</span>
+<span class="fc" id="L101">                value = resource;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            } else if (clazz == ResourceResolver.class) {</span>
+<span class="fc" id="L103">                value = resource.getResourceResolver();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            } else if (clazz == ValueMap.class) {</span>
+<span class="fc" id="L105">                value = resource.getValueMap();</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            } else if (clazz == ComponentResource.class) {</span>
+<span class="fc" id="L107">                value = resource.adaptTo(ComponentResource.class);</span>
+<span class="pc bpc" id="L108" title="1 of 4 branches missed.">            } else if (clazz == FoundationPage.class || clazz == Page.class) {</span>
+<span class="fc" id="L109">                value = resource.getResourceResolver().adaptTo(FoundationPageManager.class).getContainingPage(resource);</span>
+<span class="pc bpc" id="L110" title="3 of 4 branches missed.">            } else if (clazz == FoundationPageManager.class || clazz == PageManager.class) {</span>
+<span class="fc" id="L111">                value = resource.getResourceResolver().adaptTo(FoundationPageManager.class);</span>
+<span class="fc" id="L112">            } else {</span>
+<span class="nc" id="L113">                LOG.debug(&quot;class : {} is not supported by this injector&quot;, clazz.getName());</span>
+            }
+
+<span class="fc" id="L116">            LOG.debug(&quot;injecting class : {} with instance : {}&quot;, clazz.getName(), value);</span>
+        }
+
+<span class="fc" id="L119">        return value;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

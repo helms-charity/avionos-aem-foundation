@@ -2,7 +2,6 @@ package com.avionos.aem.foundation.injectors.specs
 
 import com.avionos.aem.foundation.core.specs.FoundationSpec
 import com.avionos.aem.foundation.injectors.impl.ComponentInjector
-import com.avionos.aem.foundation.injectors.impl.ContentPolicyInjector
 import com.avionos.aem.foundation.injectors.impl.EnumInjector
 import com.avionos.aem.foundation.injectors.impl.ImageInjector
 import com.avionos.aem.foundation.injectors.impl.InheritInjector
@@ -36,7 +35,6 @@ abstract class SlingModelSpec extends FoundationSpec {
         slingContext.with {
             registerInjector(new ComponentInjector(), Integer.MIN_VALUE)
             registerInjector(new ResourceResolverAdaptableInjector(), Integer.MAX_VALUE)
-            registerInjector(new ContentPolicyInjector())
             registerInjector(new TagInjector())
             registerInjector(new EnumInjector())
             registerInjector(new ImageInjector())

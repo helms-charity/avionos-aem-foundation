@@ -1,7 +1,9 @@
 package com.avionos.aem.foundation.injectors.impl;
 
 import com.avionos.aem.foundation.injectors.utils.FoundationInjectorUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.service.component.annotations.Component;
@@ -31,23 +33,37 @@ public final class ModelListInjector implements Injector {
         if (resource != null && FoundationInjectorUtils.isParameterizedListType(declaredType)) {
             final Class typeClass = FoundationInjectorUtils.getActualType((ParameterizedType) declaredType);
 
-            final Resource childResource = resource.getChild(name);
+            if (isTypeAdaptableFromResource(typeClass)) {
+                final Resource childResource = resource.getChild(name);
 
-            if (childResource != null) {
-                final List<Object> models = new ArrayList<>();
+                if (childResource != null) {
+                    final List<Object> models = new ArrayList<>();
 
-                for (final Resource grandChildResource : childResource.getChildren()) {
-                    final Object adaptedType = grandChildResource.adaptTo(typeClass);
+                    for (final Resource grandChildResource : childResource.getChildren()) {
+                        final Object adaptedType = grandChildResource.adaptTo(typeClass);
 
-                    if (adaptedType != null) {
-                        models.add(adaptedType);
+                        if (adaptedType != null) {
+                            models.add(adaptedType);
+                        }
                     }
-                }
 
-                value = models;
+                    value = models;
+                }
             }
         }
 
         return value;
+    }
+
+    private boolean isTypeAdaptableFromResource(final Class typeClass) {
+        boolean adaptableFromResource = false;
+
+        if (typeClass.isAnnotationPresent(Model.class)) {
+            final Model model = (Model) typeClass.getDeclaredAnnotation(Model.class);
+
+            adaptableFromResource = ArrayUtils.contains(model.adaptables(), Resource.class);
+        }
+
+        return adaptableFromResource;
     }
 }

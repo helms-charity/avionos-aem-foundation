@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LinkBuilderFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Core</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.core.link.builders.factory</a> &gt; <span class="el_source">LinkBuilderFactory.java</span></div><h1>LinkBuilderFactory.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.core.link.builders.factory;
+
+import com.avionos.aem.foundation.core.constants.PropertyConstants;
+import com.avionos.aem.foundation.core.link.builders.impl.DefaultLinkBuilder;
+import com.day.cq.wcm.api.Page;
+import com.avionos.aem.foundation.api.link.Link;
+import com.avionos.aem.foundation.api.link.builders.LinkBuilder;
+import com.avionos.aem.foundation.api.page.enums.TitleType;
+import org.apache.sling.api.resource.Resource;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Factory for acquiring &lt;code&gt;LinkBuilder&lt;/code&gt; instances.
+ */
+public final class LinkBuilderFactory {
+
+    /**
+     * Get a builder instance for an existing &lt;code&gt;Link&lt;/code&gt;.  The path, extension, title, and target are copied from
+     * the link argument.
+     *
+     * @param link existing link
+     * @return builder
+     */
+    public static LinkBuilder forLink(final Link link) {
+<span class="fc" id="L26">        checkNotNull(link);</span>
+
+<span class="fc" id="L28">        return new DefaultLinkBuilder(link.getPath(), null)</span>
+<span class="fc" id="L29">            .setExtension(link.getExtension())</span>
+<span class="fc" id="L30">            .setTitle(link.getTitle())</span>
+<span class="fc" id="L31">            .setTarget(link.getTarget());</span>
+    }
+
+    /**
+     * Get a builder instance for a page.  If the page contains a redirect, the builder will contain the redirect target
+     * rather than the page path.
+     *
+     * @param page page
+     * @return builder containing the path of the given page
+     */
+    public static LinkBuilder forPage(final Page page) {
+<span class="fc" id="L42">        return forPage(page, false, TitleType.TITLE);</span>
+    }
+
+    /**
+     * Get a builder instance for a page using the specified title type on the returned builder.
+     *
+     * @param page page
+     * @param titleType type of page title to set on the builder
+     * @return builder containing the path and title of the given page
+     */
+    public static LinkBuilder forPage(final Page page, final TitleType titleType) {
+<span class="fc" id="L53">        return forPage(page, false, titleType);</span>
+    }
+
+    /**
+     * Get a builder instance for a page.  If the page contains a redirect, the builder will contain the redirect target
+     * rather than the page path.
+     *
+     * @param page page
+     * @param mapped if true, link path will be mapped through resource resolver
+     * @return builder containing the mapped path of the given page
+     */
+    public static LinkBuilder forPage(final Page page, final boolean mapped) {
+<span class="fc" id="L65">        return forPage(page, mapped, TitleType.TITLE);</span>
+    }
+
+    /**
+     * Get a builder instance for a page using the specified title type on the returned builder.
+     *
+     * @param page page
+     * @param mapped if true, link path will be mapped through resource resolver
+     * @param titleType type of page title to set on the builder
+     * @return builder containing the path and title of the given page
+     */
+    public static LinkBuilder forPage(final Page page, final boolean mapped, final TitleType titleType) {
+<span class="fc" id="L77">        final String title = checkNotNull(page).getProperties().get(titleType.getPropertyName(), page.getTitle());</span>
+
+<span class="fc" id="L79">        final String redirect = page.getProperties().get(PropertyConstants.REDIRECT_TARGET, &quot;&quot;);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        final String path = redirect.isEmpty() ? page.getPath() : redirect;</span>
+
+<span class="fc" id="L82">        final Resource resource = page.getContentResource();</span>
+
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">        return new DefaultLinkBuilder(path, (mapped &amp;&amp; resource != null) ? resource.getResourceResolver() : null)</span>
+<span class="fc" id="L85">            .setTitle(title);</span>
+    }
+
+    /**
+     * Get a builder instance for a path.
+     *
+     * @param path content or external path
+     * @return builder containing the given path
+     */
+    public static LinkBuilder forPath(final String path) {
+<span class="fc" id="L95">        return new DefaultLinkBuilder(checkNotNull(path), null);</span>
+    }
+
+    /**
+     * Get a builder instance for a resource.
+     *
+     * @param resource resource
+     * @return builder containing the path of the given resource
+     */
+    public static LinkBuilder forResource(final Resource resource) {
+<span class="fc" id="L105">        return forResource(resource, false);</span>
+    }
+
+    /**
+     * Get a builder instance for a resource using the mapped path on the returned builder.
+     *
+     * @param resource resource
+     * @param mapped if true, link path will be mapped through resource resolver
+     * @return builder containing the mapped path of the given resource
+     */
+    public static LinkBuilder forResource(final Resource resource, final boolean mapped) {
+<span class="fc" id="L116">        checkNotNull(resource);</span>
+
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        return new DefaultLinkBuilder(resource.getPath(), mapped ? resource.getResourceResolver() : null);</span>
+    }
+
+    private LinkBuilderFactory() {
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

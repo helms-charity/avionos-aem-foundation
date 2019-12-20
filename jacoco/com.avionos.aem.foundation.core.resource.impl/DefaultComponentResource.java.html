@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultComponentResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Core</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.core.resource.impl</a> &gt; <span class="el_source">DefaultComponentResource.java</span></div><h1>DefaultComponentResource.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.core.resource.impl;
+
+import com.avionos.aem.foundation.api.link.Link;
+import com.avionos.aem.foundation.api.link.builders.LinkBuilder;
+import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.page.FoundationPageManager;
+import com.avionos.aem.foundation.api.resource.ComponentResource;
+import com.avionos.aem.foundation.core.link.builders.factory.LinkBuilderFactory;
+import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyExistsPredicate;
+import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyValuePredicate;
+import com.avionos.aem.foundation.core.utils.PathUtils;
+import com.day.cq.commons.DownloadResource;
+import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
+import com.day.cq.commons.inherit.InheritanceValueMap;
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.dam.api.Asset;
+import com.day.cq.dam.api.Rendition;
+import com.day.cq.tagging.Tag;
+import com.day.cq.tagging.TagManager;
+import com.day.cq.wcm.api.NameConstants;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.foundation.Image;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+@Model(adaptables = Resource.class, adapters = ComponentResource.class)
+<span class="fc" id="L50">public final class DefaultComponentResource implements ComponentResource {</span>
+
+<span class="fc" id="L52">    private static final Function&lt;Resource, ComponentResource&gt; TO_COMPONENT_RESOURCE = resource -&gt; resource</span>
+<span class="fc" id="L53">        .adaptTo(ComponentResource.class);</span>
+
+    /**
+     * Default page/component image name.
+     */
+<span class="fc" id="L58">    private static final String DEFAULT_IMAGE_NAME = &quot;image&quot;;</span>
+
+    @Self
+    private Resource resource;
+
+    private InheritanceValueMap properties;
+
+    private FoundationPageManager pageManager;
+
+    @Override
+    public boolean equals(final Object other) {
+<span class="fc" id="L69">        return new EqualsBuilder().append(getPath(), ((ComponentResource) other).getPath()).isEquals();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L74">        return new HashCodeBuilder().append(getPath()).hashCode();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L79">        return Objects.toStringHelper(this)</span>
+<span class="fc" id="L80">            .add(&quot;path&quot;, getPath())</span>
+<span class="fc" id="L81">            .add(&quot;properties&quot;, Maps.newHashMap(asMap()))</span>
+<span class="fc" id="L82">            .toString();</span>
+    }
+
+    @Override
+    public ValueMap asMap() {
+<span class="fc" id="L87">        return getProperties();</span>
+    }
+
+    @Override
+    public &lt;T&gt; T get(final String propertyName, final T defaultValue) {
+<span class="fc" id="L92">        return getProperties().get(checkNotNull(propertyName), defaultValue);</span>
+    }
+
+    @Override
+    public &lt;T&gt; Optional&lt;T&gt; get(final String propertyName, final Class&lt;T&gt; type) {
+<span class="fc" id="L97">        return Optional.ofNullable(getProperties().get(propertyName, type));</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; Optional&lt;AdapterType&gt; getAsType(final String propertyName, final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L102">        return getAsTypeOptional(getProperties().get(checkNotNull(propertyName), &quot;&quot;), type);</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; List&lt;AdapterType&gt; getAsTypeList(final String propertyName, final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L107">        return Arrays.stream(getProperties().get(checkNotNull(propertyName), new String[0]))</span>
+<span class="fc" id="L108">            .map(path -&gt; getAsTypeOptional(path, type).orElse(null))</span>
+<span class="fc" id="L109">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L110">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHref(final String propertyName) {
+<span class="fc" id="L115">        return getAsHref(propertyName, false);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHref(final String propertyName, final boolean strict) {
+<span class="fc" id="L120">        return getAsHref(propertyName, strict, false);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHref(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="fc" id="L125">        return getAsLink(propertyName, strict, mapped).map(Link :: getHref);</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLink(final String propertyName) {
+<span class="fc" id="L130">        return getAsLink(propertyName, false);</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLink(final String propertyName, final boolean strict) {
+<span class="fc" id="L135">        return getAsLink(propertyName, strict, false);</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLink(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="fc" id="L140">        return getLinkOptional(get(propertyName, String.class), strict, mapped);</span>
+    }
+
+    @Override
+    public &lt;T&gt; List&lt;T&gt; getAsList(final String propertyName, final Class&lt;T&gt; type) {
+<span class="fc" id="L145">        return Lists.newArrayList(getProperties().get(checkNotNull(propertyName), ObjectArrays.newArray(type, 0)));</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; getAsPage(final String propertyName) {
+<span class="fc" id="L150">        return getPageOptional(getProperties().get(checkNotNull(propertyName), &quot;&quot;));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getAsPageList(final String propertyName) {
+<span class="fc" id="L155">        return Arrays.stream(getProperties().get(checkNotNull(propertyName), new String[0]))</span>
+<span class="fc" id="L156">            .map(getPageManager() :: getPage)</span>
+<span class="fc" id="L157">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L158">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public Optional&lt;Resource&gt; getAsResource(final String propertyName) {
+<span class="fc" id="L163">        return getAsResourceOptional(getProperties().get(checkNotNull(propertyName), &quot;&quot;));</span>
+    }
+
+    @Override
+    public List&lt;Resource&gt; getAsResourceList(final String propertyName) {
+<span class="fc" id="L168">        return Arrays.stream(getProperties().get(checkNotNull(propertyName), new String[0]))</span>
+<span class="fc" id="L169">            .map(path -&gt; getAsResourceOptional(path).orElse(null))</span>
+<span class="fc" id="L170">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L171">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public String getHref() {
+<span class="fc" id="L176">        return getHref(false);</span>
+    }
+
+    @Override
+    public String getHref(final boolean mapped) {
+<span class="fc" id="L181">        return getLink(mapped).getHref();</span>
+    }
+
+    @Override
+    public Link getLink() {
+<span class="fc" id="L186">        return getLink(false);</span>
+    }
+
+    @Override
+    public Link getLink(final boolean mapped) {
+<span class="fc" id="L191">        return getLinkBuilder(mapped).build();</span>
+    }
+
+    @Override
+    public LinkBuilder getLinkBuilder() {
+<span class="fc" id="L196">        return getLinkBuilder(false);</span>
+    }
+
+    @Override
+    public LinkBuilder getLinkBuilder(final boolean mapped) {
+<span class="fc" id="L201">        return LinkBuilderFactory.forResource(resource, mapped);</span>
+    }
+
+    @Override
+    public String getId() {
+        final String path;
+
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (resource.getName().equals(JcrConstants.JCR_CONTENT)) {</span>
+<span class="fc" id="L209">            path = resource.getParent().getPath(); // use page path for jcr:content nodes</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        } else if (resource.getResourceType().equals(NameConstants.NT_PAGE)) {</span>
+<span class="fc" id="L211">            path = resource.getPath();</span>
+<span class="fc" id="L212">        } else {</span>
+<span class="fc" id="L213">            final Page currentPage = getPageManager().getContainingPage(resource);</span>
+
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            if (currentPage != null) {</span>
+                // remove page content path since resource path relative to jcr:content will always be unique
+<span class="fc" id="L217">                path = StringUtils.removeStart(getPath(), currentPage.getContentResource().getPath());</span>
+<span class="fc" id="L218">            } else {</span>
+<span class="fc" id="L219">                path = resource.getPath(); // non-content path</span>
+            }
+        }
+
+<span class="fc" id="L223">        return path.substring(1).replaceAll(&quot;/&quot;, &quot;-&quot;);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReference(final boolean isSelf) {
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        return isSelf ? Optional.ofNullable(getProperties().get(DownloadResource.PN_REFERENCE, String.class))</span>
+<span class="fc" id="L229">            : getImageReference();</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReference() {
+<span class="fc" id="L234">        return getImageReference(DEFAULT_IMAGE_NAME);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReference(final String name) {
+<span class="fc" id="L239">        return Optional.ofNullable(getProperties().get(getImageReferencePropertyName(name), String.class));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageRendition(final String renditionName) {
+<span class="fc" id="L244">        return getImageRendition(DEFAULT_IMAGE_NAME, checkNotNull(renditionName));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageRendition(final String name, final String renditionName) {
+<span class="fc" id="L249">        checkNotNull(renditionName);</span>
+
+<span class="fc" id="L251">        return getAsType(getImageReferencePropertyName(name), Asset.class)</span>
+<span class="fc" id="L252">            .flatMap(asset -&gt; asset.getRenditions()</span>
+<span class="fc" id="L253">                .stream()</span>
+<span class="fc" id="L254">                .filter(rendition -&gt; rendition.getName().equals(renditionName))</span>
+<span class="fc" id="L255">                .findFirst())</span>
+<span class="fc" id="L256">            .map(Rendition :: getPath);</span>
+    }
+
+    @Override
+    public List&lt;Tag&gt; getTags(final String propertyName) {
+<span class="fc" id="L261">        final TagManager tagManager = resource.getResourceResolver().adaptTo(TagManager.class);</span>
+
+<span class="fc" id="L263">        return getAsList(propertyName, String.class)</span>
+<span class="fc" id="L264">            .stream()</span>
+<span class="fc" id="L265">            .map(tagManager :: resolve)</span>
+<span class="fc" id="L266">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L267">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public List&lt;Tag&gt; getTagsInherited(final String propertyName) {
+<span class="fc" id="L272">        final TagManager tagManager = resource.getResourceResolver().adaptTo(TagManager.class);</span>
+
+<span class="fc" id="L274">        return getAsListInherited(propertyName, String.class)</span>
+<span class="fc" id="L275">            .stream()</span>
+<span class="fc" id="L276">            .map(tagManager :: resolve)</span>
+<span class="fc" id="L277">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L278">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public int getIndex() {
+<span class="fc" id="L283">        return getIndexForPredicate(resource -&gt; true);</span>
+    }
+
+    @Override
+    public int getIndex(final String resourceType) {
+<span class="fc" id="L288">        return getIndexForPredicate(resource -&gt; resource.isResourceType(resourceType));</span>
+    }
+
+    @Override
+    public String getPath() {
+<span class="fc" id="L293">        return resource.getPath();</span>
+    }
+
+    @Override
+    public Resource getResource() {
+<span class="fc" id="L298">        return resource;</span>
+    }
+
+    @Override
+    public boolean isHasImage() {
+<span class="fc bfc" id="L303" title="All 4 branches covered.">        return isHasImage(null) || isHasImage(DEFAULT_IMAGE_NAME);</span>
+    }
+
+    @Override
+    public boolean isHasImage(final String name) {
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        if (name != null) {</span>
+<span class="fc" id="L309">            final Resource child = resource.getChild(name);</span>
+
+<span class="fc bfc" id="L311" title="All 4 branches covered.">            return child != null &amp;&amp; new Image(resource, name).hasContent();</span>
+        } else {
+<span class="fc" id="L313">            return new Image(resource).hasContent();</span>
+        }
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; findAncestor(final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="fc" id="L319">        return findAncestorForPredicate(predicate, false);</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; findAncestor(final Predicate&lt;ComponentResource&gt; predicate,
+        final boolean excludeCurrentResource) {
+<span class="fc" id="L325">        return findAncestorForPredicate(predicate, excludeCurrentResource);</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; findDescendants(final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="fc" id="L330">        final List&lt;ComponentResource&gt; descendantComponentResources = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        for (final ComponentResource componentResource : getComponentResources()) {</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">            if (predicate.test(componentResource)) {</span>
+<span class="fc" id="L334">                descendantComponentResources.add(componentResource);</span>
+            }
+
+<span class="fc" id="L337">            descendantComponentResources.addAll(componentResource.findDescendants(predicate));</span>
+        }
+
+<span class="fc" id="L340">        return descendantComponentResources;</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; findAncestorWithProperty(final String propertyName) {
+<span class="fc" id="L345">        return findAncestorForPredicate(new ComponentResourcePropertyExistsPredicate(propertyName), false);</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; findAncestorWithProperty(final String propertyName,
+        final boolean excludeCurrentResource) {
+<span class="fc" id="L351">        return findAncestorForPredicate(new ComponentResourcePropertyExistsPredicate(propertyName),</span>
+<span class="fc" id="L352">            excludeCurrentResource);</span>
+    }
+
+    @Override
+    public &lt;V&gt; Optional&lt;ComponentResource&gt; findAncestorWithPropertyValue(final String propertyName,
+        final V propertyValue) {
+<span class="fc" id="L358">        return findAncestorForPredicate(new ComponentResourcePropertyValuePredicate&lt;&gt;(propertyName, propertyValue),</span>
+<span class="fc" id="L359">            false);</span>
+    }
+
+    @Override
+    public &lt;V&gt; Optional&lt;ComponentResource&gt; findAncestorWithPropertyValue(final String propertyName,
+        final V propertyValue, final boolean excludeCurrentResource) {
+<span class="fc" id="L365">        return findAncestorForPredicate(new ComponentResourcePropertyValuePredicate&lt;&gt;(propertyName, propertyValue),</span>
+<span class="fc" id="L366">            excludeCurrentResource);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHrefInherited(final String propertyName) {
+<span class="fc" id="L371">        return getAsHrefInherited(propertyName, false);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHrefInherited(final String propertyName, final boolean mapped) {
+<span class="fc" id="L376">        return getAsHrefInherited(propertyName, mapped, false);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHrefInherited(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="fc" id="L381">        return getAsLinkInherited(propertyName, strict, mapped).map(Link :: getHref);</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLinkInherited(final String propertyName) {
+<span class="fc" id="L386">        return getAsLinkInherited(propertyName, false);</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLinkInherited(final String propertyName, final boolean strict) {
+<span class="fc" id="L391">        return getAsLinkInherited(propertyName, strict, false);</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLinkInherited(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="fc" id="L396">        return getLinkOptional(getInherited(propertyName, String.class), strict, mapped);</span>
+    }
+
+    @Override
+    public &lt;T&gt; List&lt;T&gt; getAsListInherited(final String propertyName, final Class&lt;T&gt; type) {
+<span class="fc" id="L401">        return Arrays.asList(getProperties().getInherited(checkNotNull(propertyName), ObjectArrays.newArray(type, 0)));</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; getAsPageInherited(final String propertyName) {
+<span class="fc" id="L406">        return getPageOptional(getProperties().getInherited(checkNotNull(propertyName), &quot;&quot;));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getAsPageListInherited(final String propertyName) {
+<span class="fc" id="L411">        return getAsListInherited(propertyName, String.class)</span>
+<span class="fc" id="L412">            .stream()</span>
+<span class="fc" id="L413">            .map(getPageManager() :: getPage)</span>
+<span class="fc" id="L414">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L415">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public Optional&lt;Resource&gt; getAsResourceInherited(final String propertyName) {
+<span class="fc" id="L420">        return getAsResourceOptional(getProperties().getInherited(checkNotNull(propertyName), &quot;&quot;));</span>
+    }
+
+    @Override
+    public List&lt;Resource&gt; getAsResourceListInherited(final String propertyName) {
+<span class="fc" id="L425">        return getAsListInherited(propertyName, String.class)</span>
+<span class="fc" id="L426">            .stream()</span>
+<span class="fc" id="L427">            .map(path -&gt; getAsResourceOptional(path).orElse(null))</span>
+<span class="fc" id="L428">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L429">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; Optional&lt;AdapterType&gt; getAsTypeInherited(final String propertyName,
+        final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L435">        return getAsTypeOptional(getProperties().getInherited(checkNotNull(propertyName), &quot;&quot;), type);</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; List&lt;AdapterType&gt; getAsTypeListInherited(final String propertyName,
+        final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L441">        return getAsListInherited(propertyName, String.class)</span>
+<span class="fc" id="L442">            .stream()</span>
+<span class="fc" id="L443">            .map(path -&gt; getAsResourceOptional(path)</span>
+<span class="fc" id="L444">                .map(resource -&gt; resource.adaptTo(type))</span>
+<span class="fc" id="L445">                .orElse(null))</span>
+<span class="fc" id="L446">            .filter(java.util.Objects :: nonNull)</span>
+<span class="fc" id="L447">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; getComponentResource(final String relativePath) {
+<span class="fc" id="L452">        return Optional.ofNullable(resource.getChild(checkNotNull(relativePath))).map(TO_COMPONENT_RESOURCE);</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResources() {
+<span class="fc" id="L457">        return Lists.newArrayList(resource.getChildren())</span>
+<span class="fc" id="L458">            .stream()</span>
+<span class="fc" id="L459">            .map(TO_COMPONENT_RESOURCE)</span>
+<span class="fc" id="L460">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResources(final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="fc" id="L465">        return Lists.newArrayList(resource.getChildren())</span>
+<span class="fc" id="L466">            .stream()</span>
+<span class="fc" id="L467">            .map(TO_COMPONENT_RESOURCE)</span>
+<span class="fc" id="L468">            .filter(checkNotNull(predicate))</span>
+<span class="fc" id="L469">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResources(final String relativePath) {
+<span class="fc" id="L474">        return Optional.of(resource.getChild(checkNotNull(relativePath)))</span>
+<span class="fc" id="L475">            .map(childResource -&gt; Lists.newArrayList(childResource.getChildren())</span>
+<span class="fc" id="L476">                .stream()</span>
+<span class="fc" id="L477">                .map(TO_COMPONENT_RESOURCE)</span>
+<span class="fc" id="L478">                .collect(Collectors.toList()))</span>
+<span class="fc" id="L479">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResources(final String relativePath, final String resourceType) {
+<span class="fc" id="L484">        return getComponentResources(relativePath,</span>
+<span class="fc" id="L485">            componentResource -&gt; componentResource.getResource().isResourceType(resourceType));</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResources(final String relativePath,
+        final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="fc" id="L491">        return getComponentResources(checkNotNull(relativePath))</span>
+<span class="fc" id="L492">            .stream()</span>
+<span class="fc" id="L493">            .filter(checkNotNull(predicate))</span>
+<span class="fc" id="L494">            .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReferenceInherited() {
+<span class="fc" id="L499">        return getImageReferenceInherited(DEFAULT_IMAGE_NAME);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReferenceInherited(boolean isSelf) {
+<span class="fc bfc" id="L504" title="All 2 branches covered.">        return isSelf ? Optional.ofNullable(getProperties().getInherited(DownloadResource.PN_REFERENCE, String.class))</span>
+<span class="fc" id="L505">            : getImageReferenceInherited();</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReferenceInherited(final String name) {
+<span class="fc" id="L510">        final String propertyName = new StringBuilder(name)</span>
+<span class="fc" id="L511">            .append(&quot;/&quot;)</span>
+<span class="fc" id="L512">            .append(DownloadResource.PN_REFERENCE)</span>
+<span class="fc" id="L513">            .toString();</span>
+
+<span class="fc" id="L515">        return Optional.ofNullable(getProperties().getInherited(propertyName, String.class));</span>
+    }
+
+    @Override
+    public &lt;T&gt; T getInherited(final String propertyName, final T defaultValue) {
+<span class="fc" id="L520">        return getProperties().getInherited(propertyName, defaultValue);</span>
+    }
+
+    @Override
+    public &lt;T&gt; Optional&lt;T&gt; getInherited(final String propertyName, final Class&lt;T&gt; type) {
+<span class="fc" id="L525">        return Optional.ofNullable(getProperties().getInherited(propertyName, type));</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; getComponentResourceInherited(final String relativePath) {
+<span class="fc" id="L530">        return findChildComponentResourceInherited(relativePath);</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited() {
+<span class="fc" id="L535">        return findAncestor(componentResource -&gt; componentResource.getResource().hasChildren())</span>
+<span class="fc" id="L536">            .map(ComponentResource :: getComponentResources)</span>
+<span class="fc" id="L537">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited(final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="fc" id="L542">        return findAncestor(componentResource -&gt; componentResource.getResource().hasChildren())</span>
+<span class="fc" id="L543">            .map(componentResource -&gt; componentResource.getComponentResources()</span>
+<span class="fc" id="L544">                .stream()</span>
+<span class="fc" id="L545">                .filter(predicate)</span>
+<span class="fc" id="L546">                .collect(Collectors.toList()))</span>
+<span class="fc" id="L547">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited(final String relativePath) {
+<span class="fc" id="L552">        return findChildComponentResourceInherited(relativePath)</span>
+<span class="fc" id="L553">            .map(ComponentResource :: getComponentResources)</span>
+<span class="fc" id="L554">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited(final String relativePath,
+        final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="fc" id="L560">        return findChildComponentResourceInherited(relativePath)</span>
+<span class="fc" id="L561">            .map(componentResource -&gt; componentResource.getComponentResources()</span>
+<span class="fc" id="L562">                .stream()</span>
+<span class="fc" id="L563">                .filter(predicate)</span>
+<span class="fc" id="L564">                .collect(Collectors.toList()))</span>
+<span class="fc" id="L565">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; getParent() {
+<span class="fc" id="L570">        return Optional.ofNullable(resource.getParent()).map(TO_COMPONENT_RESOURCE);</span>
+    }
+
+    // internals
+
+    private Optional&lt;Resource&gt; getAsResourceOptional(final String path) {
+<span class="fc" id="L576">        return Optional.ofNullable(path).map(resourcePath -&gt; resource.getResourceResolver().getResource(resourcePath));</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private &lt;AdapterType&gt; Optional&lt;AdapterType&gt; getAsTypeOptional(final String path, final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L581">        final Optional&lt;Resource&gt; resource = getAsResourceOptional(path);</span>
+
+<span class="fc bfc" id="L583" title="All 2 branches covered.">        return type == Resource.class ? (Optional&lt;AdapterType&gt;) resource : resource.map(r -&gt; r.adaptTo(type));</span>
+    }
+
+    private Optional&lt;Link&gt; getLinkOptional(final Optional&lt;String&gt; pathOptional, final boolean strict,
+        final boolean mapped) {
+<span class="fc" id="L588">        return pathOptional.map(path -&gt; {</span>
+<span class="fc" id="L589">            final ResourceResolver resourceResolver = resource.getResourceResolver();</span>
+<span class="fc" id="L590">            final Resource resource = resourceResolver.getResource(path);</span>
+
+            final LinkBuilder linkBuilder;
+
+<span class="fc bfc" id="L594" title="All 2 branches covered.">            if (resource != null) {</span>
+                // internal link
+<span class="fc" id="L596">                linkBuilder = LinkBuilderFactory.forResource(resource, mapped);</span>
+<span class="fc" id="L597">            } else {</span>
+                // external link
+<span class="fc bfc" id="L599" title="All 2 branches covered.">                final String mappedPath = mapped ? resourceResolver.map(path) : path;</span>
+
+<span class="fc" id="L601">                linkBuilder = LinkBuilderFactory.forPath(mappedPath);</span>
+
+<span class="fc bfc" id="L603" title="All 2 branches covered.">                if (strict) {</span>
+<span class="fc" id="L604">                    linkBuilder.setExternal(PathUtils.isExternal(mappedPath, resourceResolver));</span>
+                }
+            }
+
+<span class="fc" id="L608">            return linkBuilder.build();</span>
+        });
+    }
+
+    private int getIndexForPredicate(final Predicate&lt;Resource&gt; resourceTypePredicate) {
+<span class="fc" id="L613">        final List&lt;Resource&gt; resources = Lists.newArrayList(resource.getParent().getChildren())</span>
+<span class="fc" id="L614">            .stream()</span>
+<span class="fc" id="L615">            .filter(resourceTypePredicate)</span>
+<span class="fc" id="L616">            .collect(Collectors.toList());</span>
+
+<span class="fc" id="L618">        return IntStream.range(0, resources.size())</span>
+<span class="fc" id="L619">            .filter(i -&gt; resources.get(i).getPath().equals(this.getPath()))</span>
+<span class="fc" id="L620">            .findFirst()</span>
+<span class="fc" id="L621">            .orElse(-1);</span>
+    }
+
+    private Optional&lt;FoundationPage&gt; getPageOptional(final String path) {
+<span class="fc" id="L625">        return Optional.ofNullable(getPageManager().getPage(path));</span>
+    }
+
+    private Optional&lt;ComponentResource&gt; findAncestorForPredicate(final Predicate&lt;ComponentResource&gt; predicate,
+        final boolean excludeCurrentResource) {
+<span class="fc" id="L630">        final Page containingPage = getPageManager().getContainingPage(resource);</span>
+
+<span class="fc bfc" id="L632" title="All 2 branches covered.">        final String relativePath = resource.getName().equals(JcrConstants.JCR_CONTENT) ? &quot;&quot; : resource.getPath()</span>
+<span class="fc" id="L633">            .substring(containingPage.getContentResource().getPath().length() + 1);</span>
+
+<span class="fc bfc" id="L635" title="All 2 branches covered.">        final Function&lt;Page, Resource&gt; contentResourceFunction = page -&gt; relativePath.isEmpty() ? page</span>
+<span class="fc" id="L636">            .getContentResource() : page.getContentResource(relativePath);</span>
+
+<span class="fc" id="L638">        Predicate&lt;Page&gt; pagePredicate = page -&gt; {</span>
+<span class="fc" id="L639">            final Resource contentResource = contentResourceFunction.apply(page);</span>
+
+<span class="fc bfc" id="L641" title="All 4 branches covered.">            return contentResource != null &amp;&amp; predicate.test(contentResource.adaptTo(ComponentResource.class));</span>
+        };
+
+<span class="fc" id="L644">        return findAncestorPage(containingPage, pagePredicate, excludeCurrentResource)</span>
+<span class="fc" id="L645">            .map(page -&gt; contentResourceFunction.apply(page).adaptTo(ComponentResource.class));</span>
+    }
+
+    private Optional&lt;ComponentResource&gt; findChildComponentResourceInherited(final String relativePath) {
+<span class="fc" id="L649">        final Page containingPage = resource.getResourceResolver().adaptTo(PageManager.class)</span>
+<span class="fc" id="L650">            .getContainingPage(resource);</span>
+
+<span class="fc" id="L652">        final StringBuilder builder = new StringBuilder();</span>
+
+<span class="fc bfc" id="L654" title="All 2 branches covered.">        if (resource.getName().equals(JcrConstants.JCR_CONTENT)) {</span>
+<span class="fc" id="L655">            builder.append(relativePath);</span>
+<span class="fc" id="L656">        } else {</span>
+<span class="fc" id="L657">            builder.append(resource.getPath().substring(containingPage.getContentResource().getPath().length() + 1));</span>
+<span class="fc" id="L658">            builder.append('/');</span>
+<span class="fc" id="L659">            builder.append(relativePath);</span>
+        }
+
+        // path relative to jcr:content
+<span class="fc" id="L663">        final String resourcePath = builder.toString();</span>
+
+<span class="fc bfc" id="L665" title="All 2 branches covered.">        return findAncestorPage(containingPage, page -&gt; page.getContentResource(resourcePath) != null, false)</span>
+<span class="fc" id="L666">            .map(page -&gt; page.getContentResource(resourcePath))</span>
+<span class="fc" id="L667">            .map(TO_COMPONENT_RESOURCE);</span>
+    }
+
+    private Optional&lt;Page&gt; findAncestorPage(final Page page, final Predicate&lt;Page&gt; predicate,
+        final boolean excludeCurrent) {
+<span class="fc bfc" id="L672" title="All 2 branches covered.">        Page currentPage = excludeCurrent ? page.getParent() : page;</span>
+<span class="fc" id="L673">        Page ancestorPage = null;</span>
+
+<span class="fc bfc" id="L675" title="All 2 branches covered.">        while (currentPage != null) {</span>
+<span class="fc bfc" id="L676" title="All 2 branches covered.">            if (predicate.test(currentPage)) {</span>
+<span class="fc" id="L677">                ancestorPage = currentPage;</span>
+<span class="fc" id="L678">                break;</span>
+            } else {
+<span class="fc" id="L680">                currentPage = currentPage.getParent();</span>
+            }
+        }
+
+<span class="fc" id="L684">        return Optional.ofNullable(ancestorPage);</span>
+    }
+
+    private FoundationPageManager getPageManager() {
+<span class="fc bfc" id="L688" title="All 2 branches covered.">        if (pageManager == null) {</span>
+<span class="fc" id="L689">            pageManager = resource.getResourceResolver().adaptTo(FoundationPageManager.class);</span>
+        }
+
+<span class="fc" id="L692">        return pageManager;</span>
+    }
+
+    private InheritanceValueMap getProperties() {
+<span class="fc bfc" id="L696" title="All 2 branches covered.">        if (properties == null) {</span>
+<span class="fc" id="L697">            properties = new HierarchyNodeInheritanceValueMap(resource);</span>
+        }
+
+<span class="fc" id="L700">        return properties;</span>
+    }
+
+    private String getImageReferencePropertyName(final String name) {
+<span class="fc" id="L704">        return checkNotNull(name) + &quot;/&quot; + DownloadResource.PN_REFERENCE;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

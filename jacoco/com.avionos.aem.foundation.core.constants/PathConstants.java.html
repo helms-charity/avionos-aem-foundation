@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PathConstants.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Core</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.core.constants</a> &gt; <span class="el_source">PathConstants.java</span></div><h1>PathConstants.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.core.constants;
+
+import com.day.cq.commons.jcr.JcrConstants;
+
+import java.util.regex.Pattern;
+
+/**
+ * JCR path and extension constants.
+ */
+public final class PathConstants {
+
+    public static final String EXTENSION_HTML = &quot;html&quot;;
+
+    public static final String EXTENSION_JSON = &quot;json&quot;;
+
+    public static final String EXTENSION_PNG = &quot;png&quot;;
+
+    public static final String PATH_CONTENT = &quot;/content&quot;;
+
+    public static final String PATH_CONTENT_DAM = &quot;/content/dam&quot;;
+
+    public static final String PATH_ETC = &quot;/etc&quot;;
+
+    public static final String PATH_JCR_CONTENT = &quot;/&quot; + JcrConstants.JCR_CONTENT;
+
+    public static final String PATH_SEPARATOR = &quot;/&quot;;
+
+    public static final String REGEX_CONTENT = PATH_CONTENT + &quot;/([^/]+)/?(.+)?&quot;;
+
+<span class="nc" id="L30">    public static final Pattern PATTERN_CONTENT = Pattern.compile(REGEX_CONTENT);</span>
+
+<span class="nc" id="L32">    public static final String SELECTOR = &quot;.&quot;;</span>
+
+    private PathConstants() {
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

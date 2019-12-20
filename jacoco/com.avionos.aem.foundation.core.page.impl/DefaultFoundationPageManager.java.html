@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFoundationPageManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Core</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.core.page.impl</a> &gt; <span class="el_source">DefaultFoundationPageManager.java</span></div><h1>DefaultFoundationPageManager.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.core.page.impl;
+
+import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.page.FoundationPageManager;
+import com.avionos.aem.foundation.core.page.predicates.TemplatePredicate;
+import com.day.cq.commons.RangeIterator;
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.tagging.TagManager;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.Revision;
+import com.day.cq.wcm.api.Template;
+import com.day.cq.wcm.api.WCMException;
+import com.day.cq.wcm.api.msm.Blueprint;
+import com.google.common.base.Stopwatch;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.RowIterator;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
+public final class DefaultFoundationPageManager implements FoundationPageManager {
+
+<span class="fc" id="L39">    private static final Logger LOG = LoggerFactory.getLogger(DefaultFoundationPageManager.class);</span>
+
+    private final ResourceResolver resourceResolver;
+
+    private final PageManager pageManager;
+
+<span class="fc" id="L45">    public DefaultFoundationPageManager(final ResourceResolver resourceResolver) {</span>
+<span class="fc" id="L46">        this.resourceResolver = resourceResolver;</span>
+
+<span class="fc" id="L48">        pageManager = resourceResolver.adaptTo(PageManager.class);</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public FoundationPage copy(final Page page, final String destination, final String beforeName,
+        final boolean shallow, final boolean resolveConflict) throws WCMException {
+<span class="nc" id="L54">        return getPage(pageManager.copy(page, destination, beforeName, shallow, resolveConflict));</span>
+    }
+
+    @Override
+    public FoundationPage copy(final Page page, final String destination, final String beforeName,
+        final boolean shallow, final boolean resolveConflict, final boolean autoSave) throws WCMException {
+<span class="nc" id="L60">        return getPage(pageManager.copy(page, destination, beforeName, shallow, resolveConflict, autoSave));</span>
+    }
+
+    @Override
+    public FoundationPage create(final String parentPath, final String pageName, final String template,
+        final String title) throws WCMException {
+<span class="nc" id="L66">        return getPage(pageManager.create(parentPath, pageName, template, title));</span>
+    }
+
+    @Override
+    public FoundationPage create(final String parentPath, final String pageName, final String template,
+        final String title, final boolean autoSave) throws WCMException {
+<span class="nc" id="L72">        return getPage(pageManager.create(parentPath, pageName, template, title, autoSave));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; findPages(final String rootPath, final Collection&lt;String&gt; tagIds,
+        final boolean matchOne) {
+<span class="fc" id="L78">        checkNotNull(rootPath);</span>
+<span class="fc" id="L79">        checkNotNull(tagIds);</span>
+
+<span class="fc" id="L81">        LOG.debug(&quot;path = {}, tag IDs = {}&quot;, rootPath, tagIds);</span>
+
+<span class="fc" id="L83">        final Stopwatch stopwatch = Stopwatch.createStarted();</span>
+
+<span class="fc" id="L85">        final RangeIterator&lt;Resource&gt; iterator = resourceResolver.adaptTo(TagManager.class).find(rootPath,</span>
+<span class="fc" id="L86">            tagIds.toArray(new String[0]), matchOne);</span>
+
+<span class="fc" id="L88">        final List&lt;FoundationPage&gt; pages = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        while (iterator.hasNext()) {</span>
+<span class="fc" id="L91">            final Resource resource = iterator.next();</span>
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (JcrConstants.JCR_CONTENT.equals(resource.getName())) {</span>
+<span class="fc" id="L94">                final FoundationPage page = getPage(resource.getParent().getPath());</span>
+
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                if (page != null) {</span>
+<span class="fc" id="L97">                    pages.add(page);</span>
+                }
+            }
+        }
+
+<span class="fc" id="L102">        LOG.debug(&quot;found {} result(s) in {}ms&quot;, pages.size(), stopwatch.elapsed(MILLISECONDS));</span>
+
+<span class="fc" id="L104">        return pages;</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; findPages(final String rootPath, final String templatePath) {
+<span class="fc" id="L109">        return findPages(rootPath, new TemplatePredicate(templatePath));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; findPages(final String rootPath, final Predicate&lt;FoundationPage&gt; predicate) {
+<span class="fc" id="L114">        final Stopwatch stopwatch = Stopwatch.createStarted();</span>
+
+<span class="fc" id="L116">        final FoundationPage page = getPage(checkNotNull(rootPath));</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        final List&lt;FoundationPage&gt; pages = page != null ? page.findDescendants(predicate) : Collections.emptyList();</span>
+
+<span class="fc" id="L119">        stopwatch.stop();</span>
+
+<span class="fc" id="L121">        LOG.debug(&quot;found {} result(s) in {}ms&quot;, pages.size(), stopwatch.elapsed(MILLISECONDS));</span>
+
+<span class="fc" id="L123">        return pages;</span>
+    }
+
+    @Override
+    public FoundationPage getContainingPage(final Resource resource) {
+<span class="fc" id="L128">        return getPage(pageManager.getContainingPage(resource));</span>
+    }
+
+    @Override
+    public FoundationPage getContainingPage(final String path) {
+<span class="fc" id="L133">        return getPage(pageManager.getContainingPage(path));</span>
+    }
+
+    @Override
+    public FoundationPage getPage(final Page page) {
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        return page != null ? page.adaptTo(FoundationPage.class) : null;</span>
+    }
+
+    @Override
+    public FoundationPage getPage(final String path) {
+<span class="fc" id="L143">        return getPage(pageManager.getPage(path));</span>
+    }
+
+    @Override
+    public FoundationPage move(final Page page, final String destination, final String beforeName,
+        final boolean shallow, final boolean resolveConflict, final String[] adjustRefs) throws WCMException {
+<span class="nc" id="L149">        return getPage(pageManager.move(page, destination, beforeName, shallow, resolveConflict, adjustRefs));</span>
+    }
+
+    @Override
+    public FoundationPage move(final Page page, final String destination, final String beforeName,
+        final boolean shallow, final boolean resolveConflict, final String[] adjustRefs, final String[] publishRefs)
+        throws WCMException {
+<span class="nc" id="L156">        return getPage(pageManager.move(page, destination, beforeName, shallow, resolveConflict, adjustRefs,</span>
+<span class="nc" id="L157">            publishRefs));</span>
+    }
+
+    @Override
+    public FoundationPage restore(final String path, final String revisionId) throws WCMException {
+<span class="nc" id="L162">        return getPage(pageManager.restore(path, revisionId));</span>
+    }
+
+    @Override
+    public FoundationPage restoreTree(final String path, final Calendar date) throws WCMException {
+<span class="nc" id="L167">        return getPage(pageManager.restoreTree(path, date));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; search(final Query query) {
+<span class="fc" id="L172">        return search(query, -1);</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; search(final Query query, final int limit) {
+<span class="fc" id="L177">        checkNotNull(query);</span>
+
+<span class="fc" id="L179">        LOG.debug(&quot;query statement = {}&quot;, query.getStatement());</span>
+
+<span class="fc" id="L181">        final Stopwatch stopwatch = Stopwatch.createStarted();</span>
+
+<span class="fc" id="L183">        final List&lt;FoundationPage&gt; pages = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L185">        int count = 0;</span>
+
+        try {
+<span class="fc" id="L188">            final Set&lt;String&gt; paths = new HashSet&lt;&gt;();</span>
+
+<span class="fc" id="L190">            final RowIterator rows = query.execute().getRows();</span>
+
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            while (rows.hasNext()) {</span>
+<span class="fc" id="L193">                final String path = rows.nextRow().getPath();</span>
+
+<span class="fc bfc" id="L195" title="All 4 branches covered.">                if (limit == -1 || count &lt; limit) {</span>
+<span class="fc" id="L196">                    LOG.debug(&quot;result path = {}&quot;, path);</span>
+
+<span class="fc" id="L198">                    final FoundationPage page = getContainingPage(path);</span>
+
+                    // ensure no duplicate pages are added
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">                    if (!paths.contains(page.getPath())) {</span>
+<span class="fc" id="L202">                        paths.add(page.getPath());</span>
+
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                        if (page != null) {</span>
+<span class="fc" id="L205">                            pages.add(page);</span>
+<span class="fc" id="L206">                            count++;</span>
+<span class="fc" id="L207">                        } else {</span>
+<span class="nc" id="L208">                            LOG.error(&quot;result is null for path : {}&quot;, path);</span>
+                        }
+                    }
+                }
+            }
+
+<span class="fc" id="L214">            stopwatch.stop();</span>
+
+<span class="fc" id="L216">            LOG.debug(&quot;found {} result(s) in {}ms&quot;, pages.size(), stopwatch.elapsed(MILLISECONDS));</span>
+<span class="pc" id="L217">        } catch (RepositoryException re) {</span>
+<span class="nc" id="L218">            LOG.error(&quot;error finding pages for query : &quot; + query.getStatement(), re);</span>
+        }
+
+<span class="fc" id="L221">        return pages;</span>
+    }
+
+    // delegate methods
+
+    @Override
+    public Resource move(final Resource resource, final String s, final String s1, final boolean b, final boolean b1,
+        final String[] strings) throws WCMException {
+<span class="nc" id="L229">        return pageManager.move(resource, s, s1, b, b1, strings);</span>
+    }
+
+    @Override
+    public Resource move(final Resource resource, final String s, final String s1, final boolean b, final boolean b1,
+        final String[] strings, final String[] strings1) throws WCMException {
+<span class="nc" id="L235">        return pageManager.move(resource, s, s1, b, b1, strings, strings1);</span>
+    }
+
+    @Override
+    public Resource copy(final CopyOptions copyOptions) throws WCMException {
+<span class="nc" id="L240">        return pageManager.copy(copyOptions);</span>
+    }
+
+    @Override
+    public Resource copy(final Resource resource, final String s, final String s1, final boolean b, final boolean b1)
+        throws WCMException {
+<span class="nc" id="L246">        return pageManager.copy(resource, s, s1, b, b1);</span>
+    }
+
+    @Override
+    public Resource copy(final Resource resource, final String s, final String s1, final boolean b, final boolean b1,
+        final boolean b2) throws WCMException {
+<span class="nc" id="L252">        return pageManager.copy(resource, s, s1, b, b1, b2);</span>
+    }
+
+    @Override
+    public void delete(final Page page, final boolean b) throws WCMException {
+<span class="nc" id="L257">        pageManager.delete(page, b);</span>
+<span class="nc" id="L258">    }</span>
+
+    @Override
+    public void delete(final Page page, final boolean b, final boolean b1) throws WCMException {
+<span class="nc" id="L262">        pageManager.delete(page, b, b1);</span>
+<span class="nc" id="L263">    }</span>
+
+    @Override
+    public void delete(final Resource resource, final boolean b) throws WCMException {
+<span class="nc" id="L267">        pageManager.delete(resource, b);</span>
+<span class="nc" id="L268">    }</span>
+
+    @Override
+    public void delete(final Resource resource, final boolean b, final boolean b1) throws WCMException {
+<span class="nc" id="L272">        pageManager.delete(resource, b, b1);</span>
+<span class="nc" id="L273">    }</span>
+
+    @Override
+    public void order(final Page page, final String s) throws WCMException {
+<span class="nc" id="L277">        pageManager.order(page, s);</span>
+<span class="nc" id="L278">    }</span>
+
+    @Override
+    public void order(final Page page, final String s, final boolean b) throws WCMException {
+<span class="nc" id="L282">        pageManager.order(page, s, b);</span>
+<span class="nc" id="L283">    }</span>
+
+    @Override
+    public void order(final Resource resource, final String s) throws WCMException {
+<span class="nc" id="L287">        pageManager.order(resource, s);</span>
+<span class="nc" id="L288">    }</span>
+
+    @Override
+    public void order(final Resource resource, final String s, final boolean b) throws WCMException {
+<span class="nc" id="L292">        pageManager.order(resource, s, b);</span>
+<span class="nc" id="L293">    }</span>
+
+    @Override
+    public Template getTemplate(final String s) {
+<span class="nc" id="L297">        return pageManager.getTemplate(s);</span>
+    }
+
+    @Override
+    public Collection&lt;Template&gt; getTemplates(final String s) {
+<span class="nc" id="L302">        return pageManager.getTemplates(s);</span>
+    }
+
+    @Override
+    @Deprecated
+    public Collection&lt;Blueprint&gt; getBlueprints(final String s) {
+<span class="nc" id="L308">        return pageManager.getBlueprints(s);</span>
+    }
+
+    @Override
+    public Revision createRevision(final Page page) throws WCMException {
+<span class="nc" id="L313">        return pageManager.createRevision(page);</span>
+    }
+
+    @Override
+    public Revision createRevision(final Page page, final String s, final String s1) throws WCMException {
+<span class="nc" id="L318">        return pageManager.createRevision(page, s, s1);</span>
+    }
+
+    @Override
+    public Collection&lt;Revision&gt; getRevisions(final String s, final Calendar calendar) throws WCMException {
+<span class="nc" id="L323">        return pageManager.getRevisions(s, calendar);</span>
+    }
+
+    @Override
+    public Collection&lt;Revision&gt; getRevisions(final String s, final Calendar calendar, final boolean b)
+        throws WCMException {
+<span class="nc" id="L329">        return pageManager.getRevisions(s, calendar, b);</span>
+    }
+
+    @Override
+    public Collection&lt;Revision&gt; getChildRevisions(final String s, final Calendar calendar) throws WCMException {
+<span class="nc" id="L334">        return pageManager.getChildRevisions(s, calendar);</span>
+    }
+
+    @Override
+    public Collection&lt;Revision&gt; getChildRevisions(final String s, final Calendar calendar, final boolean b)
+        throws WCMException {
+<span class="nc" id="L340">        return pageManager.getChildRevisions(s, calendar, b);</span>
+    }
+
+    @Override
+    public Collection&lt;Revision&gt; getChildRevisions(final String s, final String s1, final Calendar calendar)
+        throws WCMException {
+<span class="nc" id="L346">        return pageManager.getChildRevisions(s, s1, calendar);</span>
+    }
+
+    @Override
+    public Page restoreTree(final String s, final Calendar calendar, final boolean b) throws WCMException {
+<span class="nc" id="L351">        return pageManager.restoreTree(s, calendar, b);</span>
+    }
+
+    @Override
+    public void touch(final Node node, final boolean b, final Calendar calendar, final boolean b1) throws WCMException {
+<span class="nc" id="L356">        pageManager.touch(node, b, calendar, b1);</span>
+<span class="nc" id="L357">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

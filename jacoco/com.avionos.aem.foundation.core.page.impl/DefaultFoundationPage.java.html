@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFoundationPage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Core</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.core.page.impl</a> &gt; <span class="el_source">DefaultFoundationPage.java</span></div><h1>DefaultFoundationPage.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.core.page.impl;
+
+import com.avionos.aem.foundation.api.Accessible;
+import com.avionos.aem.foundation.api.Inheritable;
+import com.avionos.aem.foundation.api.link.Link;
+import com.avionos.aem.foundation.api.link.builders.LinkBuilder;
+import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.page.FoundationPageManager;
+import com.avionos.aem.foundation.api.page.enums.TitleType;
+import com.avionos.aem.foundation.api.resource.ComponentResource;
+import com.avionos.aem.foundation.core.link.builders.factory.LinkBuilderFactory;
+import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyExistsPredicate;
+import com.avionos.aem.foundation.core.resource.predicates.ComponentResourcePropertyValuePredicate;
+import com.day.cq.commons.Filter;
+import com.day.cq.tagging.Tag;
+import com.day.cq.wcm.api.NameConstants;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.Template;
+import com.day.cq.wcm.api.WCMException;
+import com.day.cq.wcm.commons.DeepResourceIterator;
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+@Model(adaptables = Page.class, adapters = FoundationPage.class)
+<span class="fc" id="L41">public final class DefaultFoundationPage implements FoundationPage {</span>
+
+<span class="fc" id="L43">    private static final Filter&lt;Page&gt; ALL_PAGES = page -&gt; true;</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">    private static final Predicate&lt;FoundationPage&gt; DISPLAYABLE_ONLY = page -&gt; page.getContentResource() != null &amp;&amp; !page</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        .isHideInNav();</span>
+
+    @Self
+    private Page page;
+
+    private Optional&lt;ComponentResource&gt; componentResource;
+
+    @Override
+    public boolean equals(final Object other) {
+<span class="nc" id="L55">        return new EqualsBuilder().append(getPath(), ((FoundationPage) other).getPath()).isEquals();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L60">        return new HashCodeBuilder().append(getPath()).hashCode();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L65">        return Objects.toStringHelper(this)</span>
+<span class="nc" id="L66">            .add(&quot;path&quot;, getPath())</span>
+<span class="nc" id="L67">            .add(&quot;title&quot;, getTitle())</span>
+<span class="nc" id="L68">            .toString();</span>
+    }
+
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;AdapterType&gt; AdapterType adaptTo(final Class&lt;AdapterType&gt; type) {
+        final AdapterType result;
+
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (type == Page.class) {</span>
+<span class="nc" id="L77">            result = (AdapterType) page;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        } else if (type == ComponentResource.class) {</span>
+<span class="fc" id="L79">            result = (AdapterType) getComponentResource().orElse(null);</span>
+<span class="fc" id="L80">        } else {</span>
+<span class="nc" id="L81">            result = page.adaptTo(type);</span>
+        }
+
+<span class="fc" id="L84">        return result;</span>
+    }
+
+    @Override
+    public ValueMap asMap() {
+<span class="fc" id="L89">        return getComponentResource().map(Accessible :: asMap).orElse(ValueMap.EMPTY);</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; findAncestor(final Predicate&lt;FoundationPage&gt; predicate) {
+<span class="nc" id="L94">        return findAncestor(predicate, false);</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; findAncestor(final Predicate&lt;FoundationPage&gt; predicate,
+        final boolean excludeCurrentResource) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        FoundationPage page = excludeCurrentResource ? getParent() : this;</span>
+<span class="fc" id="L101">        FoundationPage ancestorPage = null;</span>
+
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        while (page != null) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (predicate.test(page)) {</span>
+<span class="fc" id="L105">                ancestorPage = page;</span>
+<span class="fc" id="L106">                break;</span>
+            } else {
+<span class="fc" id="L108">                page = page.getParent();</span>
+            }
+        }
+
+<span class="fc" id="L112">        return Optional.ofNullable(ancestorPage);</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; findAncestorWithProperty(final String propertyName) {
+<span class="nc" id="L117">        return findAncestorForPredicate(new ComponentResourcePropertyExistsPredicate(propertyName), false);</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; findAncestorWithProperty(final String propertyName,
+        final boolean excludeCurrentResource) {
+<span class="fc" id="L123">        return findAncestorForPredicate(new ComponentResourcePropertyExistsPredicate(propertyName),</span>
+<span class="fc" id="L124">            excludeCurrentResource);</span>
+    }
+
+    @Override
+    public &lt;V&gt; Optional&lt;FoundationPage&gt; findAncestorWithPropertyValue(final String propertyName,
+        final V propertyValue) {
+<span class="fc" id="L130">        return findAncestorForPredicate(new ComponentResourcePropertyValuePredicate&lt;&gt;(propertyName, propertyValue),</span>
+<span class="fc" id="L131">            false);</span>
+    }
+
+    @Override
+    public &lt;V&gt; Optional&lt;FoundationPage&gt; findAncestorWithPropertyValue(final String propertyName, final V propertyValue,
+        final boolean excludeCurrentResource) {
+<span class="fc" id="L137">        return findAncestorForPredicate(new ComponentResourcePropertyValuePredicate&lt;&gt;(propertyName, propertyValue),</span>
+<span class="fc" id="L138">            excludeCurrentResource);</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; findDescendants(final Predicate&lt;FoundationPage&gt; predicate) {
+<span class="fc" id="L143">        final List&lt;FoundationPage&gt; pages = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L145">        final FoundationPageManager pageManager = getPageManager();</span>
+
+<span class="fc" id="L147">        final Iterator&lt;Page&gt; iterator = page.listChildren(ALL_PAGES, true);</span>
+
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        while (iterator.hasNext()) {</span>
+<span class="fc" id="L150">            final FoundationPage page = pageManager.getPage(iterator.next());</span>
+
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            if (predicate.test(page)) {</span>
+<span class="fc" id="L153">                pages.add(page);</span>
+            }
+        }
+
+<span class="fc" id="L157">        return pages;</span>
+    }
+
+    @Override
+    public &lt;T&gt; T get(final String propertyName, final T defaultValue) {
+<span class="fc" id="L162">        return getComponentResource()</span>
+<span class="fc" id="L163">            .map(componentResource -&gt; componentResource.get(propertyName, defaultValue))</span>
+<span class="fc" id="L164">            .orElse(defaultValue);</span>
+    }
+
+    @Override
+    public &lt;T&gt; Optional&lt;T&gt; get(final String propertyName, final Class&lt;T&gt; type) {
+<span class="fc" id="L169">        return getComponentResource().flatMap(componentResource -&gt; componentResource.get(propertyName, type));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHref(final String propertyName) {
+<span class="fc" id="L174">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsHref(propertyName));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHref(final String propertyName, final boolean strict) {
+<span class="fc" id="L179">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsHref(propertyName, strict));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHref(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="fc" id="L184">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsHref(propertyName, strict,</span>
+<span class="fc" id="L185">            mapped));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHrefInherited(final String propertyName) {
+<span class="nc" id="L190">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsHrefInherited(propertyName));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHrefInherited(final String propertyName, final boolean strict) {
+<span class="nc" id="L195">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsHrefInherited(propertyName,</span>
+<span class="nc" id="L196">            strict));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getAsHrefInherited(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="nc" id="L201">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsHrefInherited(propertyName,</span>
+<span class="nc" id="L202">            strict, mapped));</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLinkInherited(final String propertyName) {
+<span class="nc" id="L207">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsLinkInherited(propertyName));</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLinkInherited(final String propertyName, final boolean strict) {
+<span class="nc" id="L212">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsLinkInherited(propertyName,</span>
+<span class="nc" id="L213">            strict));</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLinkInherited(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="nc" id="L218">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsLinkInherited(propertyName,</span>
+<span class="nc" id="L219">            strict, mapped));</span>
+    }
+
+    @Override
+    public &lt;T&gt; List&lt;T&gt; getAsListInherited(final String propertyName, final Class&lt;T&gt; type) {
+<span class="nc" id="L224">        return getComponentResource()</span>
+<span class="nc" id="L225">            .map(componentResource -&gt; componentResource.getAsListInherited(propertyName, type))</span>
+<span class="nc" id="L226">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; getAsPageInherited(final String propertyName) {
+<span class="nc" id="L231">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsPageInherited(propertyName));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getAsPageListInherited(final String propertyName) {
+<span class="nc" id="L236">        return getComponentResource()</span>
+<span class="nc" id="L237">            .map(componentResource -&gt; componentResource.getAsPageListInherited(propertyName))</span>
+<span class="nc" id="L238">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;Resource&gt; getAsResourceInherited(final String propertyName) {
+<span class="nc" id="L243">        return getComponentResource()</span>
+<span class="nc" id="L244">            .flatMap(componentResource -&gt; componentResource.getAsResourceInherited(propertyName));</span>
+    }
+
+    @Override
+    public List&lt;Resource&gt; getAsResourceListInherited(final String propertyName) {
+<span class="nc" id="L249">        return getComponentResource()</span>
+<span class="nc" id="L250">            .map(componentResource -&gt; componentResource.getAsResourceListInherited(propertyName))</span>
+<span class="nc" id="L251">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; Optional&lt;AdapterType&gt; getAsTypeInherited(final String propertyName,
+        final Class&lt;AdapterType&gt; type) {
+<span class="nc" id="L257">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsTypeInherited(propertyName,</span>
+<span class="nc" id="L258">            type));</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; List&lt;AdapterType&gt; getAsTypeListInherited(final String propertyName,
+        final Class&lt;AdapterType&gt; type) {
+<span class="nc" id="L264">        return getComponentResource()</span>
+<span class="nc" id="L265">            .map(componentResource -&gt; componentResource.getAsTypeListInherited(propertyName, type))</span>
+<span class="nc" id="L266">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public String getHref() {
+<span class="fc" id="L271">        return getHref(false);</span>
+    }
+
+    @Override
+    public String getHref(final boolean mapped) {
+<span class="fc" id="L276">        return getLink(mapped).getHref();</span>
+    }
+
+    @Override
+    public Link getLink() {
+<span class="fc" id="L281">        return getLink(false);</span>
+    }
+
+    @Override
+    public Link getLink(final boolean mapped) {
+<span class="fc" id="L286">        return getLinkBuilder(mapped).build();</span>
+    }
+
+    @Override
+    public LinkBuilder getLinkBuilder() {
+<span class="nc" id="L291">        return getLinkBuilder(false);</span>
+    }
+
+    @Override
+    public LinkBuilder getLinkBuilder(final boolean mapped) {
+<span class="fc" id="L296">        return LinkBuilderFactory.forPage(this, mapped, TitleType.TITLE);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReferenceInherited(final boolean isSelf) {
+<span class="nc" id="L301">        return getComponentResource()</span>
+<span class="nc" id="L302">            .flatMap(componentResource -&gt; componentResource.getImageReferenceInherited(isSelf));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReferenceInherited() {
+<span class="nc" id="L307">        return getComponentResource().flatMap(Inheritable :: getImageReferenceInherited);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReferenceInherited(final String name) {
+<span class="nc" id="L312">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getImageReferenceInherited(name));</span>
+    }
+
+    @Override
+    public &lt;T&gt; T getInherited(final String propertyName, final T defaultValue) {
+<span class="nc" id="L317">        return getComponentResource()</span>
+<span class="nc" id="L318">            .map(componentResource -&gt; componentResource.getInherited(propertyName, defaultValue))</span>
+<span class="nc" id="L319">            .orElse(defaultValue);</span>
+    }
+
+    @Override
+    public &lt;T&gt; Optional&lt;T&gt; getInherited(final String propertyName, final Class&lt;T&gt; type) {
+<span class="nc" id="L324">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getInherited(propertyName, type));</span>
+    }
+
+    @Override
+    public List&lt;Tag&gt; getTagsInherited(final String propertyName) {
+<span class="nc" id="L329">        return getComponentResource()</span>
+<span class="nc" id="L330">            .map(componentResource -&gt; componentResource.getTagsInherited(propertyName))</span>
+<span class="nc" id="L331">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; getComponentResourceInherited(final String relativePath) {
+<span class="nc" id="L336">        return getComponentResource()</span>
+<span class="nc" id="L337">            .flatMap(componentResource -&gt; componentResource.getComponentResourceInherited(relativePath));</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited() {
+<span class="nc" id="L342">        return getComponentResource()</span>
+<span class="nc" id="L343">            .map(Inheritable :: getComponentResourcesInherited)</span>
+<span class="nc" id="L344">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited(final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="nc" id="L349">        return getComponentResource()</span>
+<span class="nc" id="L350">            .map(componentResource -&gt; componentResource.getComponentResourcesInherited(predicate))</span>
+<span class="nc" id="L351">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited(final String relativePath) {
+<span class="nc" id="L356">        return getComponentResource()</span>
+<span class="nc" id="L357">            .map(componentResource -&gt; componentResource.getComponentResourcesInherited(relativePath))</span>
+<span class="nc" id="L358">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;ComponentResource&gt; getComponentResourcesInherited(final String relativePath,
+        final Predicate&lt;ComponentResource&gt; predicate) {
+<span class="nc" id="L364">        return getComponentResource()</span>
+<span class="nc" id="L365">            .map(componentResource -&gt; componentResource.getComponentResourcesInherited(relativePath, predicate))</span>
+<span class="nc" id="L366">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLink(final String propertyName) {
+<span class="nc" id="L371">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsLink(propertyName));</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLink(final String propertyName, final boolean strict) {
+<span class="nc" id="L376">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsLink(propertyName, strict));</span>
+    }
+
+    @Override
+    public Optional&lt;Link&gt; getAsLink(final String propertyName, final boolean strict, final boolean mapped) {
+<span class="nc" id="L381">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsLink(propertyName, strict,</span>
+<span class="nc" id="L382">            mapped));</span>
+    }
+
+    @Override
+    public &lt;T&gt; List&lt;T&gt; getAsList(final String propertyName, final Class&lt;T&gt; type) {
+<span class="nc" id="L387">        return getComponentResource()</span>
+<span class="nc" id="L388">            .map(componentResource -&gt; componentResource.getAsList(propertyName, type))</span>
+<span class="nc" id="L389">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; getAsPage(final String propertyName) {
+<span class="nc" id="L394">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsPage(propertyName));</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getAsPageList(final String propertyName) {
+<span class="nc" id="L399">        return getComponentResource()</span>
+<span class="nc" id="L400">            .map(componentResource -&gt; componentResource.getAsPageList(propertyName))</span>
+<span class="nc" id="L401">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;Resource&gt; getAsResource(final String propertyName) {
+<span class="nc" id="L406">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsResource(propertyName));</span>
+    }
+
+    @Override
+    public List&lt;Resource&gt; getAsResourceList(final String propertyName) {
+<span class="nc" id="L411">        return getComponentResource()</span>
+<span class="nc" id="L412">            .map(componentResource -&gt; componentResource.getAsResourceList(propertyName))</span>
+<span class="nc" id="L413">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; Optional&lt;AdapterType&gt; getAsType(final String propertyName, final Class&lt;AdapterType&gt; type) {
+<span class="nc" id="L418">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getAsType(propertyName, type));</span>
+    }
+
+    @Override
+    public &lt;AdapterType&gt; List&lt;AdapterType&gt; getAsTypeList(final String propertyName, final Class&lt;AdapterType&gt; type) {
+<span class="nc" id="L423">        return getComponentResource()</span>
+<span class="nc" id="L424">            .map(componentResource -&gt; componentResource.getAsTypeList(propertyName, type))</span>
+<span class="nc" id="L425">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReference(final boolean isSelf) {
+<span class="nc" id="L430">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getImageReference(isSelf));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReference() {
+<span class="nc" id="L435">        return getComponentResource().flatMap(Accessible :: getImageReference);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageReference(final String name) {
+<span class="nc" id="L440">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getImageReference(name));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageRendition(final String renditionName) {
+<span class="nc" id="L445">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getImageRendition(renditionName));</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getImageRendition(final String name, final String renditionName) {
+<span class="nc" id="L450">        return getComponentResource().flatMap(componentResource -&gt; componentResource.getImageRendition(name,</span>
+<span class="nc" id="L451">            renditionName));</span>
+    }
+
+    @Override
+    public List&lt;Tag&gt; getTags(final String propertyName) {
+<span class="nc" id="L456">        return getComponentResource()</span>
+<span class="nc" id="L457">            .map(componentResource -&gt; componentResource.getTags(propertyName))</span>
+<span class="nc" id="L458">            .orElse(Collections.emptyList());</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getChildren() {
+<span class="fc" id="L463">        return filterChildren(page -&gt; true, false);</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getChildren(final boolean displayableOnly) {
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">        return displayableOnly ? filterChildren(DISPLAYABLE_ONLY, false) : getChildren();</span>
+    }
+
+    @Override
+    public List&lt;FoundationPage&gt; getChildren(final Predicate&lt;FoundationPage&gt; predicate) {
+<span class="fc" id="L473">        return filterChildren(checkNotNull(predicate), false);</span>
+    }
+
+    @Override
+    public boolean isHasImage() {
+<span class="nc" id="L478">        return getComponentResource().map(Accessible :: isHasImage).orElse(false);</span>
+    }
+
+    @Override
+    public boolean isHasImage(final String name) {
+<span class="nc" id="L483">        return getComponentResource().map(componentResource -&gt; componentResource.isHasImage(name)).orElse(false);</span>
+    }
+
+    @Override
+    public Iterator&lt;FoundationPage&gt; listChildPages() {
+<span class="fc" id="L488">        return listChildPages(page -&gt; true);</span>
+    }
+
+    @Override
+    public Iterator&lt;FoundationPage&gt; listChildPages(final Predicate&lt;FoundationPage&gt; predicate) {
+<span class="fc" id="L493">        return listChildPages(predicate, false);</span>
+    }
+
+    @Override
+    public Iterator&lt;FoundationPage&gt; listChildPages(final Predicate&lt;FoundationPage&gt; predicate, final boolean deep) {
+<span class="fc" id="L498">        final Resource resource = page.adaptTo(Resource.class);</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">        final Iterator&lt;Resource&gt; iterator = deep ? new DeepResourceIterator(resource) : resource.listChildren();</span>
+
+<span class="fc" id="L501">        return new FoundationPageIterator(iterator, predicate);</span>
+    }
+
+    @Override
+    public Optional&lt;FoundationPage&gt; getChild(final String name) {
+<span class="fc" id="L506">        Optional&lt;FoundationPage&gt; child = Optional.empty();</span>
+
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">        if (hasChild(name)) {</span>
+<span class="fc" id="L509">            child = Optional.of(page.adaptTo(Resource.class).getChild(name).adaptTo(FoundationPage.class));</span>
+        }
+
+<span class="fc" id="L512">        return child;</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; getComponentResource() {
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">        if (componentResource == null) {</span>
+<span class="fc" id="L518">            componentResource = Optional.ofNullable(page.getContentResource())</span>
+<span class="fc" id="L519">                .map(resource -&gt; resource.adaptTo(ComponentResource.class));</span>
+        }
+
+<span class="fc" id="L522">        return componentResource;</span>
+    }
+
+    @Override
+    public Optional&lt;ComponentResource&gt; getComponentResource(final String relativePath) {
+<span class="fc" id="L527">        return Optional.ofNullable(page.getContentResource(relativePath))</span>
+<span class="fc" id="L528">            .map(resource -&gt; resource.adaptTo(ComponentResource.class));</span>
+    }
+
+    @Override
+    public Link getLink(final TitleType titleType) {
+<span class="fc" id="L533">        return getLinkBuilder(titleType).build();</span>
+    }
+
+    @Override
+    public Link getLink(final TitleType titleType, final boolean mapped) {
+<span class="nc" id="L538">        return getLinkBuilder(titleType, mapped).build();</span>
+    }
+
+    @Override
+    public LinkBuilder getLinkBuilder(final TitleType titleType) {
+<span class="fc" id="L543">        return getLinkBuilder(titleType, false);</span>
+    }
+
+    @Override
+    public LinkBuilder getLinkBuilder(final TitleType titleType, final boolean mapped) {
+<span class="fc" id="L548">        return LinkBuilderFactory.forPage(this, mapped, titleType);</span>
+    }
+
+    @Override
+    public Link getNavigationLink(final boolean isActive) {
+<span class="fc" id="L553">        return getNavigationLink(isActive, false);</span>
+    }
+
+    @Override
+    public Link getNavigationLink(final boolean isActive, final boolean mapped) {
+<span class="fc" id="L558">        return LinkBuilderFactory.forPage(this, mapped, TitleType.NAVIGATION_TITLE)</span>
+<span class="fc" id="L559">            .setActive(isActive)</span>
+<span class="fc" id="L560">            .build();</span>
+    }
+
+    @Override
+    public String getTemplatePath() {
+<span class="fc" id="L565">        return getProperties().get(NameConstants.NN_TEMPLATE, String.class);</span>
+    }
+
+    @Override
+    public Optional&lt;String&gt; getTitle(final TitleType titleType) {
+<span class="fc" id="L570">        return get(titleType.getPropertyName(), String.class);</span>
+    }
+
+    // overridden methods
+
+    @Override
+    public FoundationPage getParent() {
+<span class="fc" id="L577">        return Optional.ofNullable(page.getParent())</span>
+<span class="fc" id="L578">            .map(parent -&gt; parent.adaptTo(FoundationPage.class))</span>
+<span class="fc" id="L579">            .orElse(null);</span>
+    }
+
+    @Override
+    public FoundationPage getParent(final int level) {
+<span class="fc" id="L584">        return Optional.ofNullable(page.getParent(level))</span>
+<span class="fc" id="L585">            .map(parent -&gt; parent.adaptTo(FoundationPage.class))</span>
+<span class="fc" id="L586">            .orElse(null);</span>
+    }
+
+    @Override
+    public FoundationPage getAbsoluteParent(final int level) {
+<span class="fc" id="L591">        return Optional.ofNullable(page.getAbsoluteParent(level))</span>
+<span class="fc" id="L592">            .map(parent -&gt; parent.adaptTo(FoundationPage.class))</span>
+<span class="fc" id="L593">            .orElse(null);</span>
+    }
+
+    @Override
+    public FoundationPageManager getPageManager() {
+<span class="fc" id="L598">        return page.getContentResource().getResourceResolver().adaptTo(FoundationPageManager.class);</span>
+    }
+
+    // delegate methods
+
+    @Override
+    public ValueMap getProperties() {
+<span class="fc" id="L605">        return page.getProperties();</span>
+    }
+
+    @Override
+    public ValueMap getProperties(final String s) {
+<span class="fc" id="L610">        return page.getProperties(s);</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L615">        return page.getName();</span>
+    }
+
+    @Override
+    public String getTitle() {
+<span class="fc" id="L620">        return page.getTitle();</span>
+    }
+
+    @Override
+    public String getDescription() {
+<span class="nc" id="L625">        return page.getDescription();</span>
+    }
+
+    @Override
+    public String getPageTitle() {
+<span class="nc" id="L630">        return page.getPageTitle();</span>
+    }
+
+    @Override
+    public String getNavigationTitle() {
+<span class="nc" id="L635">        return page.getNavigationTitle();</span>
+    }
+
+    @Override
+    public boolean isHideInNav() {
+<span class="fc" id="L640">        return page.isHideInNav();</span>
+    }
+
+    @Override
+    public boolean hasContent() {
+<span class="nc" id="L645">        return page.hasContent();</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="nc" id="L650">        return page.isValid();</span>
+    }
+
+    @Override
+    public long timeUntilValid() {
+<span class="nc" id="L655">        return page.timeUntilValid();</span>
+    }
+
+    @Override
+    public Calendar getOnTime() {
+<span class="nc" id="L660">        return page.getOnTime();</span>
+    }
+
+    @Override
+    public Calendar getOffTime() {
+<span class="nc" id="L665">        return page.getOffTime();</span>
+    }
+
+    @Override
+    public Calendar getDeleted() {
+<span class="nc" id="L670">        return page.getDeleted();</span>
+    }
+
+    @Override
+    public String getDeletedBy() {
+<span class="nc" id="L675">        return page.getDeletedBy();</span>
+    }
+
+    @Override
+    public String getLastModifiedBy() {
+<span class="nc" id="L680">        return page.getLastModifiedBy();</span>
+    }
+
+    @Override
+    public Calendar getLastModified() {
+<span class="nc" id="L685">        return page.getLastModified();</span>
+    }
+
+    @Override
+    public String getVanityUrl() {
+<span class="nc" id="L690">        return page.getVanityUrl();</span>
+    }
+
+    @Override
+    public Tag[] getTags() {
+<span class="nc" id="L695">        return page.getTags();</span>
+    }
+
+    @Override
+    public void lock() throws WCMException {
+<span class="nc" id="L700">        page.lock();</span>
+<span class="nc" id="L701">    }</span>
+
+    @Override
+    public boolean isLocked() {
+<span class="nc" id="L705">        return page.isLocked();</span>
+    }
+
+    @Override
+    public String getLockOwner() {
+<span class="nc" id="L710">        return page.getLockOwner();</span>
+    }
+
+    @Override
+    public boolean canUnlock() {
+<span class="nc" id="L715">        return page.canUnlock();</span>
+    }
+
+    @Override
+    public void unlock() throws WCMException {
+<span class="nc" id="L720">        page.unlock();</span>
+<span class="nc" id="L721">    }</span>
+
+    @Override
+    public Template getTemplate() {
+<span class="nc" id="L725">        return page.getTemplate();</span>
+    }
+
+    @Override
+    public Locale getLanguage(final boolean b) {
+<span class="nc" id="L730">        return page.getLanguage(b);</span>
+    }
+
+    @Override
+    public Locale getLanguage() {
+<span class="nc" id="L735">        return page.getLanguage();</span>
+    }
+
+    @Override
+    public String getPath() {
+<span class="fc" id="L740">        return page.getPath();</span>
+    }
+
+    @Override
+    public Resource getContentResource() {
+<span class="fc" id="L745">        return page.getContentResource();</span>
+    }
+
+    @Override
+    public Resource getContentResource(final String s) {
+<span class="fc" id="L750">        return page.getContentResource(s);</span>
+    }
+
+    @Override
+    public Iterator&lt;Page&gt; listChildren() {
+<span class="nc" id="L755">        return page.listChildren();</span>
+    }
+
+    @Override
+    public Iterator&lt;Page&gt; listChildren(final Filter&lt;Page&gt; filter) {
+<span class="nc" id="L760">        return page.listChildren(filter);</span>
+    }
+
+    @Override
+    public Iterator&lt;Page&gt; listChildren(final Filter&lt;Page&gt; filter, final boolean b) {
+<span class="nc" id="L765">        return page.listChildren(filter, b);</span>
+    }
+
+    @Override
+    public boolean hasChild(final String s) {
+<span class="fc" id="L770">        return page.hasChild(s);</span>
+    }
+
+    @Override
+    public int getDepth() {
+<span class="nc" id="L775">        return page.getDepth();</span>
+    }
+
+    // internals
+
+    private Optional&lt;FoundationPage&gt; findAncestorForPredicate(final Predicate&lt;ComponentResource&gt; predicate,
+        final boolean excludeCurrentResource) {
+<span class="fc bfc" id="L782" title="All 2 branches covered.">        FoundationPage page = excludeCurrentResource ? getParent() : this;</span>
+<span class="fc" id="L783">        FoundationPage ancestorPage = null;</span>
+
+<span class="fc bfc" id="L785" title="All 2 branches covered.">        while (page != null) {</span>
+<span class="fc" id="L786">            final Optional&lt;ComponentResource&gt; optionalComponentResource = page.getComponentResource();</span>
+
+<span class="pc bpc" id="L788" title="1 of 4 branches missed.">            if (optionalComponentResource.isPresent() &amp;&amp; predicate.test(optionalComponentResource.get())) {</span>
+<span class="fc" id="L789">                ancestorPage = page;</span>
+<span class="fc" id="L790">                break;</span>
+            } else {
+<span class="fc" id="L792">                page = page.getParent();</span>
+            }
+        }
+
+<span class="fc" id="L796">        return Optional.ofNullable(ancestorPage);</span>
+    }
+
+    private List&lt;FoundationPage&gt; filterChildren(final Predicate&lt;FoundationPage&gt; predicate, final boolean deep) {
+<span class="fc" id="L800">        final List&lt;FoundationPage&gt; pages = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L802">        final FoundationPageManager pageManager = getPageManager();</span>
+
+<span class="fc" id="L804">        final Iterator&lt;Page&gt; iterator = page.listChildren(ALL_PAGES, deep);</span>
+
+<span class="fc bfc" id="L806" title="All 2 branches covered.">        while (iterator.hasNext()) {</span>
+<span class="fc" id="L807">            final FoundationPage page = pageManager.getPage(iterator.next());</span>
+
+<span class="pc bpc" id="L809" title="1 of 4 branches missed.">            if (page != null &amp;&amp; predicate.test(page)) {</span>
+<span class="fc" id="L810">                pages.add(page);</span>
+            }
+        }
+
+<span class="fc" id="L814">        return pages;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

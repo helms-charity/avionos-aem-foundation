@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FoundationAdapterFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Avionos AEM Foundation Core</a> &gt; <a href="index.source.html" class="el_package">com.avionos.aem.foundation.core.adapter</a> &gt; <span class="el_source">FoundationAdapterFactory.java</span></div><h1>FoundationAdapterFactory.java</h1><pre class="source lang-java linenums">package com.avionos.aem.foundation.core.adapter;
+
+import com.avionos.aem.foundation.api.page.FoundationPage;
+import com.avionos.aem.foundation.api.page.FoundationPageManager;
+import com.avionos.aem.foundation.core.page.impl.DefaultFoundationPageManager;
+import com.day.cq.wcm.api.Page;
+import org.apache.sling.api.adapter.AdapterFactory;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.propertytypes.ServiceDescription;
+
+@Component(service = AdapterFactory.class, property = {
+    &quot;adaptables=org.apache.sling.api.resource.Resource&quot;,
+    &quot;adaptables=org.apache.sling.api.resource.ResourceResolver&quot;,
+    &quot;adapters=com.avionos.aem.foundation.api.page.FoundationPageManager&quot;,
+    &quot;adapters=com.avionos.aem.foundation.api.page.FoundationPage&quot;
+})
+@ServiceDescription(&quot;Avionos Foundation Adapter Factory&quot;)
+<span class="fc" id="L20">public final class FoundationAdapterFactory implements AdapterFactory {</span>
+
+    @Override
+    public &lt;AdapterType&gt; AdapterType getAdapter(final Object adaptable, final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L24">        AdapterType result = null;</span>
+
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if (adaptable instanceof ResourceResolver) {</span>
+<span class="fc" id="L27">            result = getResourceResolverAdapter((ResourceResolver) adaptable, type);</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        } else if (adaptable instanceof Resource) {</span>
+<span class="fc" id="L29">            result = getResourceAdapter((Resource) adaptable, type);</span>
+        }
+
+<span class="fc" id="L32">        return result;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private &lt;AdapterType&gt; AdapterType getResourceResolverAdapter(final ResourceResolver resourceResolver,
+        final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L38">        AdapterType result = null;</span>
+
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (type == FoundationPageManager.class) {</span>
+<span class="fc" id="L41">            result = (AdapterType) new DefaultFoundationPageManager(resourceResolver);</span>
+        }
+
+<span class="fc" id="L44">        return result;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private &lt;AdapterType&gt; AdapterType getResourceAdapter(final Resource resource, final Class&lt;AdapterType&gt; type) {
+<span class="fc" id="L49">        AdapterType result = null;</span>
+
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (type == FoundationPage.class) {</span>
+<span class="fc" id="L52">            final Page page = resource.adaptTo(Page.class);</span>
+
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            if (page != null) {</span>
+<span class="fc" id="L55">                result = (AdapterType) page.adaptTo(FoundationPage.class);</span>
+            }
+        }
+
+<span class="fc" id="L59">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -13,6 +13,19 @@
 
     <url>https://github.com/AvionosLLC/avionos-aem-foundation</url>
 
+    <developers>
+        <developer>
+            <name>Mark Daugherty</name>
+            <email>mark.daugherty@avionos.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:AvionosLLC/avionos-aem-foundation.git</connection>
+        <developerConnection>scm:git:git@github.com:AvionosLLC/avionos-aem-foundation.git</developerConnection>
+        <url>https://github.com/AvionosLLC/avionos-aem-foundation</url>
+    </scm>
+
     <organization>
         <name>Avionos</name>
         <url>http://www.avionos.com</url>

@@ -21,7 +21,7 @@ Injectors | Sling Model Injectors for a variety of common use cases - e.g. compo
 
 Avionos AEM Foundation Version(s) | AEM Version(s)
 ------------ | -------------
-0.x.x | 6.3, 6.4, 6.5
+1.0.0 | 6.3, 6.4, 6.5
 
 ## Javadocs
 

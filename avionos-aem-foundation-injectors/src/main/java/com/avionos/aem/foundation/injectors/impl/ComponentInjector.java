@@ -61,23 +61,21 @@ public final class ComponentInjector implements Injector {
         if (type instanceof Class) {
             final Class clazz = (Class) type;
 
-            final SlingHttpServletRequest request = FoundationInjectorUtils.getRequest(adaptable);
-
-            if (request == null) {
-                // get resource adaptable
-                if (RESOURCE_INJECTABLES.contains(clazz)) {
-                    final Resource resource = FoundationInjectorUtils.getResource(adaptable);
-
-                    value = getValueForResource(clazz, resource);
-                } else {
-                    LOG.debug("class : {} is not supported by this injector for adaptable resource", clazz.getName());
-                }
-            } else {
+            if (adaptable instanceof SlingHttpServletRequest) {
                 // get request adaptable
                 if (REQUEST_INJECTABLES.contains(clazz)) {
-                    value = getValueForRequest(clazz, request);
+                    value = getValueForRequest(clazz, adaptable);
+                } else if (RESOURCE_INJECTABLES.contains(clazz)) {
+                    value = getValueForResource(clazz, adaptable);
                 } else {
-                    LOG.debug("class : {} is not supported by this injector for adaptable request", clazz.getName());
+                    LOG.debug("class : {} is not supported by this injector for request", clazz.getName());
+                }
+            } else if (adaptable instanceof Resource) {
+                // get resource adaptable
+                if (RESOURCE_INJECTABLES.contains(clazz)) {
+                    value = getValueForResource(clazz, adaptable);
+                } else {
+                    LOG.debug("class : {} is not supported by this injector for resource", clazz.getName());
                 }
             }
         }
@@ -85,7 +83,9 @@ public final class ComponentInjector implements Injector {
         return value;
     }
 
-    private Object getValueForRequest(final Class clazz, final SlingHttpServletRequest request) {
+    private Object getValueForRequest(final Class clazz, final Object adaptable) {
+        final SlingHttpServletRequest request = FoundationInjectorUtils.getRequest(adaptable);
+
         Object value = null;
 
         if (clazz == WCMMode.class) {
@@ -103,22 +103,22 @@ public final class ComponentInjector implements Injector {
         return value;
     }
 
-    private Object getValueForResource(final Class clazz, final Resource resource) {
+    private Object getValueForResource(final Class clazz, final Object adaptable) {
+        final Resource resource = FoundationInjectorUtils.getResource(adaptable);
+
         Object value = null;
 
-        if (resource != null) {
-            if (clazz == ResourceResolver.class) {
-                value = resource.getResourceResolver();
-            } else if (clazz == ValueMap.class) {
-                value = resource.getValueMap();
-            } else if (clazz == ComponentResource.class) {
-                value = resource.adaptTo(ComponentResource.class);
-            } else if (clazz == FoundationPage.class || clazz == Page.class) {
-                value = resource.getResourceResolver().adaptTo(FoundationPageManager.class).getContainingPage(resource);
-            }
-
-            LOG.debug("injecting class : {} with instance : {}", clazz.getName(), value);
+        if (clazz == ResourceResolver.class) {
+            value = resource.getResourceResolver();
+        } else if (clazz == ValueMap.class) {
+            value = resource.getValueMap();
+        } else if (clazz == ComponentResource.class) {
+            value = resource.adaptTo(ComponentResource.class);
+        } else if (clazz == FoundationPage.class || clazz == Page.class) {
+            value = resource.getResourceResolver().adaptTo(FoundationPageManager.class).getContainingPage(resource);
         }
+
+        LOG.debug("injecting class : {} with instance : {}", clazz.getName(), value);
 
         return value;
     }

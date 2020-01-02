@@ -1,10 +1,8 @@
 package com.avionos.aem.foundation.injectors.impl
 
 import com.avionos.aem.foundation.api.page.FoundationPage
-import com.avionos.aem.foundation.api.page.FoundationPageManager
 import com.avionos.aem.foundation.api.resource.ComponentResource
 import com.avionos.aem.foundation.core.specs.FoundationSpec
-import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
 import spock.lang.Shared
@@ -40,7 +38,7 @@ class ComponentInjectorSpec extends FoundationSpec {
         value
 
         where:
-        type << [Resource, ResourceResolver, ValueMap, ComponentResource, FoundationPage, FoundationPageManager]
+        type << [ResourceResolver, ValueMap, ComponentResource, FoundationPage]
     }
 
     def "get value from resource for invalid type returns null value"() {

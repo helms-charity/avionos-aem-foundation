@@ -57,6 +57,12 @@ class DefaultFoundationPageSpec extends FoundationSpec {
                     sub()
                 }
             }
+            pageTitles {
+                "jcr:content"("jcr:title": "Titles")
+                noPageNoNavigationTitle("jcr:title": "Simple Title")
+                pageTitleNoNavigationTitle("jcr:title": "Simple Title", pageTitle: "Page Title")
+                pageTitleNavigationTitle("jcr:title": "Simple Title", pageTitle: "Page Title", navTitle: "Navigation Title")
+            }
         }
 
         nodeBuilder.content {
@@ -512,5 +518,32 @@ class DefaultFoundationPageSpec extends FoundationSpec {
             TitleType.NAVIGATION_TITLE,
             TitleType.PAGE_TITLE
         ]
+    }
+
+    def "get pageTitle falls back where appropriate"() {
+        setup:
+        def page = getPage(pagePath)
+
+        expect:
+        page.getPageTitle() == title
+
+        where:
+        pagePath | title
+        "/content/pageTitles/pageTitleNoNavigationTitle" | "Page Title"
+        "/content/pageTitles/noPageNoNavigationTitle" | "Simple Title"
+    }
+
+    def "get navigationTitle falls back where appropriate"() {
+        setup:
+        def page = getPage(pagePath)
+
+        expect:
+        page.getNavigationTitle() == title
+
+        where:
+        pagePath | title
+        "/content/pageTitles/pageTitleNavigationTitle" | "Navigation Title"
+        "/content/pageTitles/pageTitleNoNavigationTitle" | "Page Title"
+        "/content/pageTitles/noPageNoNavigationTitle" | "Simple Title"
     }
 }

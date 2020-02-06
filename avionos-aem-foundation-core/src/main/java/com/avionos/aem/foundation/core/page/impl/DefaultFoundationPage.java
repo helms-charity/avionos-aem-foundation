@@ -19,6 +19,7 @@ import com.day.cq.wcm.api.Template;
 import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.commons.DeepResourceIterator;
 import com.google.common.base.Objects;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.sling.api.resource.Resource;
@@ -627,12 +628,20 @@ public final class DefaultFoundationPage implements FoundationPage {
 
     @Override
     public String getPageTitle() {
-        return page.getPageTitle();
+        if (StringUtils.isNotBlank(page.getPageTitle())) {
+            return page.getPageTitle();
+        }
+
+        return getTitle();
     }
 
     @Override
     public String getNavigationTitle() {
-        return page.getNavigationTitle();
+        if (StringUtils.isNotBlank(page.getNavigationTitle())) {
+            return page.getNavigationTitle();
+        }
+
+        return getPageTitle();
     }
 
     @Override

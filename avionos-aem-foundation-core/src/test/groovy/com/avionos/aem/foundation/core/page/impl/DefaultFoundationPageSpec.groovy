@@ -530,7 +530,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         where:
         pagePath | title
         "/content/pageTitles/pageTitleNoNavigationTitle" | "Page Title"
-        "/content/pageTitles/noPageNoNavigationTitle" | "Simple Title"
+        "/content/pageTitles/noPageNoNavigationTitle"    | "Simple Title"
     }
 
     def "get navigationTitle falls back where appropriate"() {
@@ -542,8 +542,8 @@ class DefaultFoundationPageSpec extends FoundationSpec {
 
         where:
         pagePath | title
-        "/content/pageTitles/pageTitleNavigationTitle" | "Navigation Title"
+        "/content/pageTitles/pageTitleNavigationTitle"   | "Navigation Title"
         "/content/pageTitles/pageTitleNoNavigationTitle" | "Page Title"
-        "/content/pageTitles/noPageNoNavigationTitle" | "Simple Title"
+        "/content/pageTitles/noPageNoNavigationTitle"    | "Simple Title"
     }
 }

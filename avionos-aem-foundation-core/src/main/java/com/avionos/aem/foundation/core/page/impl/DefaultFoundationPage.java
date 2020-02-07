@@ -628,20 +628,14 @@ public final class DefaultFoundationPage implements FoundationPage {
 
     @Override
     public String getPageTitle() {
-        if (StringUtils.isNotBlank(page.getPageTitle())) {
-            return page.getPageTitle();
-        }
-
-        return getTitle();
+        return Optional.ofNullable(StringUtils.trimToNull(page.getPageTitle()))
+            .orElse(page.getTitle());
     }
 
     @Override
     public String getNavigationTitle() {
-        if (StringUtils.isNotBlank(page.getNavigationTitle())) {
-            return page.getNavigationTitle();
-        }
-
-        return getPageTitle();
+        return Optional.ofNullable(StringUtils.trimToNull(page.getNavigationTitle()))
+            .orElse(getPageTitle());
     }
 
     @Override

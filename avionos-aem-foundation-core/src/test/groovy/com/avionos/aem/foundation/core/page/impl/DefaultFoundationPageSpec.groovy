@@ -528,7 +528,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.getPageTitle() == title
 
         where:
-        pagePath | title
+        pagePath                                         | title
         "/content/pageTitles/pageTitleNoNavigationTitle" | "Page Title"
         "/content/pageTitles/noPageNoNavigationTitle"    | "Simple Title"
     }
@@ -541,7 +541,7 @@ class DefaultFoundationPageSpec extends FoundationSpec {
         page.getNavigationTitle() == title
 
         where:
-        pagePath | title
+        pagePath                                         | title
         "/content/pageTitles/pageTitleNavigationTitle"   | "Navigation Title"
         "/content/pageTitles/pageTitleNoNavigationTitle" | "Page Title"
         "/content/pageTitles/noPageNoNavigationTitle"    | "Simple Title"
